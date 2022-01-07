@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Get Location</string>
+    <string name="device_name">Device Name</string>
+    <string name="lat">Latitude</string>
+    <string name="lng">Longitude</string>
+    <string name="alt">altitude</string>
+    <string name="get_your_location">get your location</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="location_string">You Last Location is : Long: %1$s , Lat: %2$s</string>
+    <string name="last_update_at">Last update at:</string>
+    <string name="request_verification">Request verification</string>
+    <string name="one_minute">one minute</string>
+    <string name="three_minutes">three minutes</string>
+    <string name="five_minutes">five minutes</string>
+    <string name="seven_minutes">seven minutes</string>
+    <string name="update_interval">Update Interval</string>
+    <string name="update_now">Update Now</string>
+    <string name="code_1">code 1</string>
+    <string name="code_2">code 2</string>
+    <string name="code_3">code 3</string>
+    <string name="code_4">code 4</string>
+    <string name="location_icon">Location icon</string>
+    <string name="elevation_icon">Elevation icon</string>
+    <string name="background">background</string>
+
+
+</resources>

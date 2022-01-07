@@ -1,0 +1,2 @@
+speed:0.0,latitude:41.1054217,longitude:-102.54221,time:2021-06-16 14:19:33
+speed:0.0,latitude:41.1054217,longitude:-102.54221,time:2021-06-16 14:19:58

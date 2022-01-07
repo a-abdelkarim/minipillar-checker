@@ -1,0 +1,13 @@
+# build output
+dist
+
+# dependencies
+
+package-lock.json
+yarn.lock
+
+# other
+.DS_Store
+*node_modules/*
+**/node_modules
+node_modules

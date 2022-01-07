@@ -1,0 +1,85 @@
+Main Entities:
+    - Mini-Pillar
+    - Device
+    - User
+
+
+* Mini-Pillar:
+    # main data
+    - id
+    - code
+    - miniPillar_type
+    - subtype_cd
+    - substation_number
+    - feeder_number
+    - circuits_number
+    - used_circuits_number
+    - subMiniPilar
+    - manuf_code
+    - manuf_year
+    - image
+    - location (x, y)
+    - device (foreignKey)
+    - created_at
+    - created_by
+    - updated_at
+    - updated_by
+
+
+    # visual inspection
+    - entrance_obstacles
+    - equipment_grounding
+    - rusted_earthing_connection
+    - availability_noDang_signsMono
+    - substation_cleanliness
+    - equipment_level
+    - bumt_marks_sparks
+    - oxidation_corrosions
+    - dust_foreignDebris
+    - connectors_lugs
+    - bumt_heatingMarksOnCable
+    - urgent_issue
+    - urgent_issue_body
+    - serious_issue
+    - serious_issue_body
+
+    # IR inspection
+    - physicalCondition_dent_damages
+    - rust_corrosion_deterioration
+    - paint_condition
+    - gaps_slots
+    - locks_hinges
+    - latching_mechanism
+    - cracks_damages
+    - gaps_unblockCableEntry
+    - galvanization_bolts_nuts_screws
+    - grounding_bounding
+    - access_obstructions
+    - numbering_dangerSigns_monogram
+    - maintenance_completed
+    - minorRepair_made
+
+
+* Device:
+    - id
+    - device_code
+    - status
+    - user(foreignKey)
+    - locations (one-to-many)
+    - created_at
+
+* User:
+    - id
+    - token
+    - username
+    - password
+    - full_name
+    - email
+    - user_type
+    - device
+    - status
+    - created_at
+
+
+
+

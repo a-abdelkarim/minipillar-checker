@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input id="fileupload" type="file" name="fileupload" />
+    <button id="upload-button" onclick="uploadFile()"> Upload </button>
+
+
+    <script>
+        async function uploadFile() {
+            let formData = new FormData();           
+            formData.append("file", fileupload.files[0]);
+            await fetch('http://localhost:8000/api/minipillar/shapefile/upload', {
+              method: "POST", 
+              body: formData,
+              headers: {
+                    'Authorization': 'Token 94760c704091c517d5eff3a2e03414be867fd3ec'
+                },
+            });    
+            alert('The file has been uploaded successfully.');
+        }
+        </script>
+</body>
+</html>

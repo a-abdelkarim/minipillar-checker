@@ -1,0 +1,20 @@
+1 : install python 3.7 
+2 : inatll PIP
+3 : install virtualenv
+	
+3-1 : Run Windows Power Shell as Administrator
+3-2 : pip install virtualenv
+3-3 : pip install virtualenvwrapper-win
+3-4 : mkvirtualenv "D:\projects\gps-tracking-system\venv"
+3-5 : cd python
+3-6 : Set-ExecutionPolicy AllSigned | Press Y and Enter
+3-7 : Set-ExecutionPolicy RemoteSigned | Press Y and Enter
+3-8 : .\Scripts\activate
+
+4 : pip install -r requirements.txt
+5 : open /app 
+6 : rename `settings.sample.py` to `settings.py`
+7 : update the database config in  `settings.py`
+
+for error 'cannot be loaded because running scripts is disabled on this system'
+-> Set-ExecutionPolicy RemoteSigned

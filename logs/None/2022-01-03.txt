@@ -1,0 +1,1 @@
+speed:33.2,latitude:22.12121,longitude:33.213112,time:8552211111

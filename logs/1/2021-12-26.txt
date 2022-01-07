@@ -1,0 +1,1 @@
+speed:22;latitude:22;longitude:22;time:5959599559599
