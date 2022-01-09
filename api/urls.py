@@ -54,7 +54,11 @@ urlpatterns = [
     path('minipillar/import', Operations.as_view({'post': 'minipilar_import'}), name = 'minipillar-import'),
     # records
     path('minipillar/records', MiniPillarList.as_view(), name = 'minipillar'),
+    # record
+    path('minipillar/<str:id>/record', MiniPillarRecord.as_view(), name = 'minipillar-record'),
     # update
     path('minipillar/<str:id>/update', UpdateMiniPillar.as_view(), name = 'minipillar-update'),
+    # nearest minipillar
+    path('minipillar/nearest_minipillar', NearestMiniPillar.as_view(), name = 'nearest_minipillar'),
 
 ]

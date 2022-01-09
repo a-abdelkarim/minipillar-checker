@@ -32,6 +32,7 @@ from shapely.geometry import shape, GeometryCollection, Point
 from shapely.geometry.polygon import Polygon
 from shapely.ops import transform
 import shapely
+from turfpy.measurement import nearest_point
 
 # models
 from .models import *
@@ -49,6 +50,8 @@ import os
 from datetime import timezone
 import time
 import geojson
+#########################
+from modules.geography import Geography
 
 
 """"""""""""""""""""""""""""""
@@ -1221,6 +1224,23 @@ class UpdateMiniPillar(views.APIView):
         # if record not found
         else:
             return Response(prepareResponse({"status": 404, "instance": request.get_full_path()}, {}, False), 404)
+        
+        
+class MiniPillarRecord(views.APIView):
+    permission_classes = []
+    parser_classes = [JSONParser]
+
+    @ swagger_auto_schema(
+        tags=(['minipillars']),
+        responses=recordsResponseSchema(MinipillarSerializer)
+    )
+    @ action(detail=True, methods=['GET'])
+    def get(self, request, id):
+        minipilar = MiniPillar.objects.filter(id=id).first()
+        serializer = MinipillarSerializer(minipilar, many=False)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
 
 
 class MiniPillarList(views.APIView):
@@ -1252,6 +1272,44 @@ class MiniPillarList(views.APIView):
         
         else:
             return Response({"status": "you don't have permession!"}, 403)
+        
+        
+class NearestMiniPillar(views.APIView):
+    permission_classes = []
+    parser_classes = [JSONParser]
+
+    @ swagger_auto_schema(
+         tags=(['minipillars']),
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'latitude': openapi.Schema(type=openapi.TYPE_STRING),
+                'longitude': openapi.Schema(type=openapi.TYPE_STRING)
+            }
+        ),
+        responses=createResponseSchema(MinipillarSerializer)
+    )
+    @ action(detail=True, methods=['POST'])
+    def post(self, request):
+        # init Geography class
+        geoClass = Geography()
+        # get current point 
+        current_point = [float(request.data["latitude"]), float(request.data["longitude"])]
+        
+        # get minipillars from db
+        minipillars_object = MiniPillar.objects.all()
+        minipillars_object = MinipillarSerializer(minipillars_object, many=True)
+        # get data
+        data_object = minipillars_object.data
+        # data object to features
+        data_features = geoClass.data_to_features(data_object)
+        # features to featureCollection
+        data_featureCollection = geoClass.features_to_featureCollection(data_features)
+        # get nearest minipillar
+        nearest_minipillar = geoClass.nearest_point(current_point, data_featureCollection)
+        
+
+        return Response(nearest_minipillar, status=status.HTTP_200_OK)
 
 """"""""""""""""""""""""""""""
 # Operations

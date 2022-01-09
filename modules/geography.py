@@ -10,7 +10,7 @@ class Geography:
         pass
 
 
-    def nearest_point(self, featureCollection, point):
+    def nearest_point(self, point, featureCollection):
         """ Get Nearest point
 
         Args:
@@ -27,13 +27,35 @@ class Geography:
         near_point = json.loads(near_point)
         # get the nearest point distance
         distance = float(near_point["properties"]["distanceToPoint"]) * 1000 # convert km to meter
-        # check if the distance more than 5 meters
-        if distance > 5:
-            return False
-        else: 
-            return near_point
+        # # check if the distance more than 5 meters
+        # if distance > 5:
+        #     return False
+        # else: 
+        #     return near_point
+        return near_point
             
-
+    def data_to_features(self, data_object: dict):
+        features = []
+        for elem in data_object:
+            # get minipillar data
+            latitude = float(elem["latitude"])
+            longitude = float(elem["longitude"])
+            properties = dict(elem)
+            
+            # create feature
+            feature = Feature(geometry=Point([latitude, longitude]), properties=properties)
+            features.append(feature)
+            
+            
+        return features
+    
+    
+    def features_to_featureCollection(self, features: list):
+        feature_collection = FeatureCollection(features)
+        return feature_collection
+    
+    
+            
 
 
 

@@ -9,11 +9,14 @@ import requests
 # name = "ahmssed"
 
 
-auth_token='94760c704091c517d5eff3a2e03414be867fd3ec'
+auth_token='9c7eabce2e356a5012bfec85dd946e9dd85b1a6d'
 hed = {'Authorization': 'Token ' + auth_token}
 # data = {'json_object' : json_object, "name": name}
 
 url = 'http://localhost:8000/api/minipillar/records'
 response = requests.get(url, headers=hed)
 print(response)
-print(response.json())
+data = response.json()
+for row in data["items"]:
+    print(row["latitude"])
+    print("###############################")
