@@ -1188,11 +1188,47 @@ class UpdateMiniPillar(views.APIView):
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
+                # general
                 'code': openapi.Schema(type=openapi.TYPE_STRING),
                 'manuf_serial_number': openapi.Schema(type=openapi.TYPE_STRING),
                 'miniPillar_type': openapi.Schema(type=openapi.TYPE_STRING),
                 'subtype_cd': openapi.Schema(type=openapi.TYPE_STRING),
                 'substation_number': openapi.Schema(type=openapi.TYPE_STRING),
+                'feeder_number': openapi.Schema(type=openapi.TYPE_STRING),
+                'circuits_number': openapi.Schema(type=openapi.TYPE_STRING),
+                'used_circuits_number': openapi.Schema(type=openapi.TYPE_STRING),
+                'subMiniPilar': openapi.Schema(type=openapi.TYPE_STRING),
+                'image': openapi.Schema(type=openapi.TYPE_STRING),
+                # visual inspection
+                'entrance_obstacles': openapi.Schema(type=openapi.TYPE_STRING),
+                'equipment_grounding': openapi.Schema(type=openapi.TYPE_STRING),
+                'rusted_earthing_connection': openapi.Schema(type=openapi.TYPE_STRING),
+                'availability_noDang_signsMono': openapi.Schema(type=openapi.TYPE_STRING),
+                'substation_cleanliness': openapi.Schema(type=openapi.TYPE_STRING),
+                'bumt_marks_sparks': openapi.Schema(type=openapi.TYPE_STRING),
+                'oxidation_corrosions': openapi.Schema(type=openapi.TYPE_STRING),
+                'dust_foreignDebris': openapi.Schema(type=openapi.TYPE_STRING),
+                'connectors_lugs': openapi.Schema(type=openapi.TYPE_STRING),
+                'bumt_heatingMarksOnCable': openapi.Schema(type=openapi.TYPE_STRING),
+                'urgent_issue': openapi.Schema(type=openapi.TYPE_STRING),
+                'urgent_issue_body': openapi.Schema(type=openapi.TYPE_STRING),
+                'serious_issue': openapi.Schema(type=openapi.TYPE_STRING),
+                'serious_issue_body': openapi.Schema(type=openapi.TYPE_STRING),
+                # IR inspection
+                'physicalCondition_dent_damages': openapi.Schema(type=openapi.TYPE_STRING),
+                'rust_corrosion_deterioration': openapi.Schema(type=openapi.TYPE_STRING),
+                'paint_condition': openapi.Schema(type=openapi.TYPE_STRING),
+                'gaps_slots': openapi.Schema(type=openapi.TYPE_STRING),
+                'locks_hinges': openapi.Schema(type=openapi.TYPE_STRING),
+                'latching_mechanism': openapi.Schema(type=openapi.TYPE_STRING),
+                'cracks_damages': openapi.Schema(type=openapi.TYPE_STRING),
+                'gaps_unblockCableEntry': openapi.Schema(type=openapi.TYPE_STRING),
+                'galvanization_bolts_nuts_screws': openapi.Schema(type=openapi.TYPE_STRING),
+                'grounding_bounding': openapi.Schema(type=openapi.TYPE_STRING),
+                'access_obstructions': openapi.Schema(type=openapi.TYPE_STRING),
+                'numbering_dangerSigns_monogram': openapi.Schema(type=openapi.TYPE_STRING),
+                'maintenance_completed': openapi.Schema(type=openapi.TYPE_STRING),
+                'minorRepair_made': openapi.Schema(type=openapi.TYPE_STRING), 
             }
         ),
         responses=createResponseSchema(MinipillarSerializer)
@@ -1200,18 +1236,20 @@ class UpdateMiniPillar(views.APIView):
     @ action(detail=True, methods=['PUT'])
     def put(self, request, id=None):
         """
-        update device by id .
+        update minipillar by id .
         """
         # GET records from table
         item = MiniPillar.objects.get(id=id)
         if item:
-            # update all from post
+            # update all from post          
             for attr, value in request.data.items():
                 # if field is allowed
                 setattr(item, attr, value)
 
             try:
                 with transaction.atomic():
+                    # get device id
+                    item.device = request.user.device
                     # save data
                     item.save()
                     # GET new data
@@ -1316,7 +1354,7 @@ class NearestMiniPillar(views.APIView):
 """"""""""""""""""""""""""""""
 
 class Operations(viewsets.ModelViewSet):
-    permission_classes =  (administrator, viewer)
+    permission_classes =  []
     parser_classes = [JSONParser]
 
     @ swagger_auto_schema(
