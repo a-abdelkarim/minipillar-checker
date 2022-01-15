@@ -36,5 +36,9 @@ urlpatterns = [
     path("admin/<str:path>", index, name='index'),
     path("admin/<str:path>/<str:uuid>", index, name='index'),
     path("", index, name='index'),
+    path('dashboard/', include("dashboard.urls")),
+    # path('admin/', admin.site.urls),
+    #accounts
+    path('accounts/', include('django.contrib.auth.urls')),
 
 ]

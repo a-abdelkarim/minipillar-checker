@@ -10,7 +10,7 @@ urlpatterns = [
     path('updateUserInfo', auth.as_view({'put': 'updateUserInfo'})),
 
     # map
-    path('features', features.as_view({'get': 'locations'})),
+    # path('features', features.as_view({'get': 'locations'})),
 
 
     # users

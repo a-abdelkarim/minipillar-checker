@@ -1,6 +1,7 @@
 from django.db.models import fields
 from rest_framework import serializers
 from django.conf import settings
+from rest_framework.fields import ReadOnlyField
 # models
 from api.models import *
 from django.contrib.auth.password_validation import validate_password

@@ -35,7 +35,7 @@ SECRET_KEY = 'rxle7_(ah&k-o+3lj=jlw1y-kr9%*$o&pfkuo(93n-at$v9pg9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'mytestapp.io' , 'localhost', 'd5f9-41-43-54-187.ngrok.io']
+ALLOWED_HOSTS = ['127.0.0.1', 'mytestapp.io' , 'localhost', '0633-45-242-60-197.ngrok.io']
 
 
 # Application definition
@@ -45,14 +45,19 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
+    'django.contrib.sessions',
+    'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
     'drf_yasg',
     'rest_framework_swagger',
+    'leaflet',
     'home',
+    'dashboard',
     'api'
 ]
+SITE_ID = 1
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
@@ -66,7 +71,7 @@ SWAGGER_SETTINGS = {
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
         'app.middleware.authentication.ExpiringTokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
@@ -76,6 +81,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.FileUploadParser',
     ),
     'DEFAULT_MODEL_SERIALIZER_CLASS': (
         'rest_framework.serializers.ModelSerializer',
@@ -99,7 +105,7 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3000",  "http://127.0.0.1:3000"
+    "http://localhost:3000",  "http://127.0.0.1:3000", 'https://0633-45-242-60-197.ngrok.io', 'http://0633-45-242-60-197.ngrok.io'
 ]
 
 CORS_ALLOW_METHODS = [
@@ -126,7 +132,7 @@ CORS_ALLOW_HEADERS = [
 
 ROOT_URLCONF = 'app.urls'
 
-TEMPLATES_DIR = os.path.join(BASE_DIR, "static")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
 TEMPLATES = [
     {
@@ -217,3 +223,25 @@ STATICFILES_DIRS = (os.path.join('static'),)
 
 
 PER_PAGE = 1000
+
+
+# login
+LOGIN_REDIRECT_URL = 'dashboard'
+
+#Leaflet Settings
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (30.53, 31.68),
+    'DEFAULT_ZOOM': 15,
+    'MIN_ZOOM': 0,
+    'MAX_ZOOM': 16,
+    'DEFAULT_PRECISION': 6,
+    'ATTRIBUTION_PREFIX': "Developed By: <a href='https://a-abdelkarim.netlify.app'>Ahmed Andelkarim</a>",
+    'MINIMAP': True,
+    'SCALE': 'metric',
+    'TILES': [('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {'attribution': "&copy; Dpoint", 'maxZoom': 16}),
+    ('OSM Dark', 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {'attribution': "&copy; Dpoint", 'maxZoom': 16}),
+    ('Satelliet', 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiYS1hYmRlbGthcmltIiwiYSI6ImNramp1OGVkcjQ5cDgycXA5dWllMGw1OWsifQ.-fzXco3g18CGtHIHvHpf6A', {'attribution': "&copy; Dpoint"})]
+
+    
+}
+#Leaflet Settings

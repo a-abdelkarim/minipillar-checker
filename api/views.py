@@ -1181,7 +1181,7 @@ class features(viewsets.ModelViewSet):
 """"""""""""""""""""""""""""""
 class UpdateMiniPillar(views.APIView):
     permission_classes = []
-    parser_classes = [JSONParser]
+    parser_classes = [JSONParser ,MultiPartParser, FormParser]
 
     @ swagger_auto_schema(
         tags=(['minipillars']),
@@ -1198,7 +1198,7 @@ class UpdateMiniPillar(views.APIView):
                 'circuits_number': openapi.Schema(type=openapi.TYPE_STRING),
                 'used_circuits_number': openapi.Schema(type=openapi.TYPE_STRING),
                 'subMiniPilar': openapi.Schema(type=openapi.TYPE_STRING),
-                'image': openapi.Schema(type=openapi.TYPE_STRING),
+                'image': openapi.Schema(type=openapi.TYPE_FILE),
                 # visual inspection
                 'entrance_obstacles': openapi.Schema(type=openapi.TYPE_STRING),
                 'equipment_grounding': openapi.Schema(type=openapi.TYPE_STRING),
@@ -1294,22 +1294,21 @@ class MiniPillarList(views.APIView):
         """
         List all devices.
         """
-        if request.user.type == "administrator" or request.user.type == "viewer":
-            # GET total records
-            items = MiniPillar.objects.all()
-            # create pegnation [ start record ]
-            start = ((0 if ('page' not in request.GET)
-                    else int(request.GET['page']) - 1)) * settings.PER_PAGE
-            # create pegnation [ end record ]
-            end = start + settings.PER_PAGE
 
-            # GET all records from the table with order and pegnation
-            serializer = MinipillarSerializer(items, many=True)
-            # return the data
-            return Response(prepareResponse({"total": items.count(), "count": settings.PER_PAGE, "page":   1 if ('page' not in request.GET) else request.GET['page']}, serializer.data))
+        # GET total records
+        items = MiniPillar.objects.all()
+        # create pegnation [ start record ]
+        start = ((0 if ('page' not in request.GET)
+                else int(request.GET['page']) - 1)) * settings.PER_PAGE
+        # create pegnation [ end record ]
+        end = start + settings.PER_PAGE
+
+        # GET all records from the table with order and pegnation
+        serializer = MinipillarSerializer(items, many=True)
+        # return the data
+        return Response(prepareResponse({"total": items.count(), "code":status.HTTP_200_OK, "count": settings.PER_PAGE, "page":   1 if ('page' not in request.GET) else request.GET['page']}, serializer.data))
         
-        else:
-            return Response({"status": "you don't have permession!"}, 403)
+        
         
         
 class NearestMiniPillar(views.APIView):
@@ -1367,12 +1366,11 @@ class Operations(viewsets.ModelViewSet):
                 'full_name': openapi.Schema(type=openapi.TYPE_STRING),
                 'email': openapi.Schema(type=openapi.TYPE_STRING),
                 'password': openapi.Schema(type=openapi.TYPE_STRING),
-                'name': openapi.Schema(type=openapi.TYPE_STRING),
                 'dateOfBirth': openapi.Schema(type=openapi.TYPE_STRING),
                 'description': openapi.Schema(type=openapi.TYPE_STRING),
                 'code': openapi.Schema(type=openapi.TYPE_STRING),
                 'hardware': openapi.Schema(type=openapi.TYPE_STRING),
-            }, required=["name", "code", "hardware"],
+            }, required=[],
         ),
         responses=createResponseSchema(DeviceSerializer)
     )
@@ -1404,12 +1402,14 @@ class Operations(viewsets.ModelViewSet):
                     user.set_password(request.data['password'])
                     user.save()
 
-                    return Response(prepareResponse({"total": 1}, serializer), 401)
+                    # return Response(serializer, status=status.HTTP_401_UNAUTHORIZED)
+                    return Response(prepareResponse({"total": 1, "status": 401}, serializer), 401)
                 else:
 
                     if device.status == StatusChoices.INACTIVE:
                         serializer = DeviceSerializer(device, many=False).data
-                        return Response(prepareResponse({"total": 1}, serializer), 401)
+                        # return Response(serializer, status=status.HTTP_401_UNAUTHORIZED)
+                        return Response(prepareResponse({"total": 1, "status":401}, serializer), 401)
                     user = User.objects.filter(
                         email=request.data['username']).first()
 
@@ -1417,11 +1417,14 @@ class Operations(viewsets.ModelViewSet):
                         if check_password(request.data['password'], user.password):
                             token, created = Token.objects.get_or_create(
                                 user=user)
-                            return Response(prepareResponse({"total": 1, 'token': token.key}, serializer), 201)
+                            # return Response({"total": 1, 'token': token.key}, serializer, status=status.HTTP_201_CREATED)
+                            return Response(prepareResponse({"total": 1, 'token': token.key, 'status': 201}, serializer), 201)
                         else:
-                            return Response(prepareResponse({"total": 1}, serializer), 401)
+                            # return Response({"total": 1}, serializer, status=status.HTTP_401_UNAUTHORIZED)
+                            return Response(prepareResponse({"total": 1, 'status': 401}, serializer), 401)
                     else:
-                        return Response(prepareResponse({"total": 1}, serializer), 401)
+                        # Response({"total": 1}, serializer, status=status.HTTP_401_UNAUTHORIZED)
+                        return Response(prepareResponse({"total": 1, 'status': 401}, serializer), 401)
 
         except Exception as error:
             print(error)
