@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from sorl.thumbnail import ImageField, get_thumbnail
 
 from app.authorization import user
 from .managers import CustomUserManager, SoftDeleteManager
@@ -280,6 +281,12 @@ class MiniPillar(models.Model):
     #? spatial data
     latitude = models.FloatField(blank=False, null=False)
     longitude = models.FloatField(blank=False, null=False)
+    
+    #? other
+    # checked = models.CharField(max_length=5, default="no", blank=False, null=False)
+    checked = models.BooleanField(default=False, blank=False, null=False)
+    last_check_at = models.DateTimeField(auto_now=True, null=False)
+    checked_by = models.CharField(max_length=100, null=True, blank=True)
 
     
     
@@ -288,6 +295,8 @@ class MiniPillar(models.Model):
 
     def save(self, **kwargs):
         self.full_clean()
+        # if self.image:
+        #     self.image = get_thumbnail(self.image, '500x600', quality=25, format='JPEG')
         super().save(**kwargs)
 
     def clean(self):

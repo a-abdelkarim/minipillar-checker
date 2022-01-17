@@ -11,6 +11,7 @@ coreapi==2.3.3
 coreschema==0.0.4
 Django==3.0.6
 django-cors-headers==3.1.1
+django-leaflet==0.28.2
 django-rest-swagger==2.2.0
 djangorestframework==3.10.0
 drf-yasg==1.17.1
@@ -47,6 +48,7 @@ scipy==1.5.4
 Shapely==1.8.0
 simplejson==3.17.6
 six==1.16.0
+sorl-thumbnail==12.7.0
 sqlparse==0.4.2
 toml==0.10.2
 turfpy==0.0.7

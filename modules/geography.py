@@ -43,7 +43,7 @@ class Geography:
             properties = dict(elem)
             
             # create feature
-            feature = Feature(geometry=Point([latitude, longitude]), properties=properties)
+            feature = Feature(geometry=Point([longitude, latitude]), properties=properties)
             features.append(feature)
             
             

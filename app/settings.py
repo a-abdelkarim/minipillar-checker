@@ -35,7 +35,7 @@ SECRET_KEY = 'rxle7_(ah&k-o+3lj=jlw1y-kr9%*$o&pfkuo(93n-at$v9pg9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'mytestapp.io' , 'localhost', '0633-45-242-60-197.ngrok.io']
+ALLOWED_HOSTS = ['127.0.0.1', 'mytestapp.io' , 'localhost', 'ae77-156-205-60-212.ngrok.io']
 
 
 # Application definition
@@ -72,7 +72,7 @@ SWAGGER_SETTINGS = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        'app.middleware.authentication.ExpiringTokenAuthentication',
+        # 'app.middleware.authentication.ExpiringTokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -105,7 +105,7 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3000",  "http://127.0.0.1:3000", 'https://0633-45-242-60-197.ngrok.io', 'http://0633-45-242-60-197.ngrok.io'
+    "http://localhost:3000",  "http://127.0.0.1:3000",
 ]
 
 CORS_ALLOW_METHODS = [

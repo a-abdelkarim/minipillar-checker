@@ -19,6 +19,7 @@ from rest_framework.response import Response
 from rest_framework import status
 import rest_framework.views as views
 from rest_framework.decorators import parser_classes, api_view, permission_classes, authentication_classes, action
+from app.rest_condition import Or
 from django.db import IntegrityError, transaction
 import os.path
 import hashlib
@@ -159,8 +160,8 @@ class auth(ObtainAuthToken, viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token = Token.objects.filter(user=user).first()
-        if token:
-            token.delete()
+        # if token:
+        #     token.delete()
         token, created = Token.objects.get_or_create(user=user)
         return Response({
             'token': token.key,
@@ -931,10 +932,6 @@ class devices(viewsets.ModelViewSet):
         
         
         
-        
-        
-        ##
-
         return Response(prepareResponse({"total": item.count()}, points_feature))
         # return Response(prepareResponse({"total": item.count()}, serializer.data))
 
@@ -1034,7 +1031,7 @@ class devices(viewsets.ModelViewSet):
                 'name': openapi.Schema(type=openapi.TYPE_STRING),
                 'description': openapi.Schema(type=openapi.TYPE_STRING),
                 'group_id': openapi.Schema(type=openapi.TYPE_INTEGER),
-            }, required=["name", "group_id"],
+            },
         ),
         responses=createResponseSchema(DeviceSerializer)
     )
@@ -1054,12 +1051,14 @@ class devices(viewsets.ModelViewSet):
                 if attr not in Device.protected():
                     setattr(item, attr, value)
             # update all from post
-            setattr(user, 'email', item.hardware)
+            setattr(user, 'username', item.username)
+            setattr(user, 'email', item.email)
             setattr(user, 'type', UserTypeChoices.VIEWER)
-            user.set_password(item.code)
+            user.set_password(item.password)
             try:
                 with transaction.atomic():
                     # save data
+                    item.status = "active"
                     item.save()
                     user.save()
                     token, created = Token.objects.get_or_create(user=user)
@@ -1241,15 +1240,18 @@ class UpdateMiniPillar(views.APIView):
         # GET records from table
         item = MiniPillar.objects.get(id=id)
         if item:
-            # update all from post          
+            # update all from post
+                     
             for attr, value in request.data.items():
                 # if field is allowed
                 setattr(item, attr, value)
-
+            
             try:
                 with transaction.atomic():
                     # get device id
                     item.device = request.user.device
+                    item.checked = True
+                    item.checked_by = request.user.device.username
                     # save data
                     item.save()
                     # GET new data
@@ -1282,7 +1284,7 @@ class MiniPillarRecord(views.APIView):
 
 
 class MiniPillarList(views.APIView):
-    permission_classes = []
+    permission_classes = (Or(viewer, administrator),)
     parser_classes = [JSONParser]
 
     @ swagger_auto_schema(
@@ -1306,13 +1308,26 @@ class MiniPillarList(views.APIView):
         # GET all records from the table with order and pegnation
         serializer = MinipillarSerializer(items, many=True)
         # return the data
-        return Response(prepareResponse({"total": items.count(), "code":status.HTTP_200_OK, "count": settings.PER_PAGE, "page":   1 if ('page' not in request.GET) else request.GET['page']}, serializer.data))
+        
+        # create featureCollection
+        geoClass = Geography()
+        # get minipillars from db
+        minipillars_object = MiniPillar.objects.all()
+        minipillars_object = MinipillarSerializer(minipillars_object, many=True)
+        # get data
+        data_object = minipillars_object.data
+        # data object to features
+        data_features = geoClass.data_to_features(data_object)
+        # features to featureCollection
+        data_featureCollection = geoClass.features_to_featureCollection(data_features)
+        
+        return Response(prepareResponse({"total": items.count(), "status":status.HTTP_200_OK,"featureCollection": data_featureCollection , "count": settings.PER_PAGE, "page":   1 if ('page' not in request.GET) else request.GET['page']}, serializer.data))
         
         
         
         
 class NearestMiniPillar(views.APIView):
-    permission_classes = []
+    permission_classes = (Or(viewer, administrator),)
     parser_classes = [JSONParser]
 
     @ swagger_auto_schema(
@@ -1344,16 +1359,22 @@ class NearestMiniPillar(views.APIView):
         data_featureCollection = geoClass.features_to_featureCollection(data_features)
         # get nearest minipillar
         nearest_minipillar = geoClass.nearest_point(current_point, data_featureCollection)
+        # get nearest minipillar id
+        nearest_minipillar_id = nearest_minipillar["properties"]["id"]
+        # get from db
+        minipilar = MiniPillar.objects.filter(id=nearest_minipillar_id).first()
+        # create serializer
+        serializer = MinipillarSerializer(minipilar, many=False)
         
 
-        return Response(nearest_minipillar, status=status.HTTP_200_OK)
+        return Response({"meta":{"status": status.HTTP_200_OK}, "items":[serializer.data]}, status=status.HTTP_200_OK)
 
 """"""""""""""""""""""""""""""
 # Operations
 """"""""""""""""""""""""""""""
 
 class Operations(viewsets.ModelViewSet):
-    permission_classes =  []
+    permission_classes = []
     parser_classes = [JSONParser]
 
     @ swagger_auto_schema(
@@ -1403,7 +1424,7 @@ class Operations(viewsets.ModelViewSet):
                     user.save()
 
                     # return Response(serializer, status=status.HTTP_401_UNAUTHORIZED)
-                    return Response(prepareResponse({"total": 1, "status": 401}, serializer), 401)
+                    return Response(prepareResponse({"total": 1, "status": 200}, serializer), 200)
                 else:
 
                     if device.status == StatusChoices.INACTIVE:
@@ -1450,125 +1471,131 @@ class Operations(viewsets.ModelViewSet):
         """
         create new location "point".
         """
-        item = Location()
-        # create all from post
-        for attr, value in request.data.items():
-            # if field is allowed
-            # if attr == "time":
-            #     value = datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
-            #     value = time.mktime(value.timetuple())
-            #     setattr(item, attr, value)
-            #     # print(value)
-
-            if attr not in Area.protected():
-                setattr(item, attr, value)
-                # print(value)
+        # print("###########")
+        # print(request.user)
+        # print("###########")
+        if str(request.user) == "AnonymousUser":
+            return Response({"status": 401, "message": "you don't have permessions"}, 401)
             
 
+        else:
+            item = Location()
+            # create all from post
+            for attr, value in request.data.items():
+                # if field is allowed
+                # if attr == "time":
+                #     value = datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                #     value = time.mktime(value.timetuple())
+                #     setattr(item, attr, value)
+                #     # print(value)
 
-        # Export data to log file
-        items = list(request.data.items())
-        dirName = str(request.user.device_id)
-        today = datetime.datetime.today().strftime('%Y-%m-%d')
-        # today_unix = time.mktime(datetime.today().timetuple())
-        
-        fileName = today + ".txt"
+                if attr not in Area.protected():
+                    setattr(item, attr, value)
+                    # print(value)
+                
 
-        # check if the directory is exist
-        if os.path.exists("logs/{}".format(dirName)):
-            # check if the file is exist
-            if os.path.exists("logs/{}/{}".format(dirName, fileName)):
-                f = open("logs/{}/{}".format(dirName, fileName), "a")
 
-                if items[2][0] == "locationId":
-                    # time_gps = datetime.datetime.strptime(items[4][1], '%Y-%m-%d %H:%M:%S')
-                    # time_unix = time.mktime(time_gps.timetuple())
-                    f.write("speed:{},{}:{},{}:{},{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
-                        items[3][0], items[3][1], items[4][0], items[4][1]))
-                else:
-                    # time_gps = datetime.datetime.strptime(items[3][1], '%Y-%m-%d %H:%M:%S')
-                    # time_unix = time.mktime(time_gps.timetuple())
-                    f.write("speed:{},{}:{},{}:{},{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
-                        items[2][0], items[2][1], items[3][0], items[3][1]))
+            # Export data to log file
+            items = list(request.data.items())
+            dirName = str(request.user.device_id)
+            today = datetime.datetime.today().strftime('%Y-%m-%d')
+            # today_unix = time.mktime(datetime.today().timetuple())
+            
+            fileName = today + ".txt"
 
-                f.close()
+            # check if the directory is exist
+            if os.path.exists("logs/{}".format(dirName)):
+                # check if the file is exist
+                if os.path.exists("logs/{}/{}".format(dirName, fileName)):
+                    f = open("logs/{}/{}".format(dirName, fileName), "a")
 
-            else:
-                f = open("logs/{}/{}".format(dirName, fileName), "a")
-
-                if items[2][0] == "locationId":
-                    # time_gps = datetime.datetime.strptime(items[4][1], '%Y-%m-%d %H:%M:%S')
-                    # time_unix = time.mktime(time_gps.timetuple())
-                    f.write("speed:{},{}:{},{}:{},{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
-                        items[3][0], items[3][1], items[4][0], items[4][1]))
-                else:
-                    # time_gps = datetime.datetime.strptime(items[3][1], '%Y-%m-%d %H:%M:%S')
-                    # time_unix = time.mktime(time_gps.timetuple())
-                    f.write("speed:{},{}:{},{}:{},{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
-                        items[2][0], items[2][1], items[3][0], items[3][1]))
+                    if items[2][0] == "locationId":
+                        # time_gps = datetime.datetime.strptime(items[4][1], '%Y-%m-%d %H:%M:%S')
+                        # time_unix = time.mktime(time_gps.timetuple())
+                        f.write("speed:{},{}:{},{}:{},{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
+                            items[3][0], items[3][1], items[4][0], items[4][1]))
+                    else:
+                        # time_gps = datetime.datetime.strptime(items[3][1], '%Y-%m-%d %H:%M:%S')
+                        # time_unix = time.mktime(time_gps.timetuple())
+                        f.write("speed:{},{}:{},{}:{},{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
+                            items[2][0], items[2][1], items[3][0], items[3][1]))
 
                     f.close()
 
-        else:
-            # Directory
-            directory = dirName 
-            # Parent Directory path
-            parent_dir = "logs"
-            # Path
-            path = os.path.join(parent_dir, directory)
-            # Create the directory
-            os.mkdir(path)
-
-            if True:
-                f = open("logs/{}/{}".format(dirName, fileName), "a")
-
-                if items[2][0] == "locationId":
-                    # time_gps = datetime.datetime.strptime(items[4][1], '%Y-%m-%d %H:%M:%S')
-                    # time_unix = time.mktime(time_gps.timetuple())
-                    f.write("speed:{};{}:{};{}:{};{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
-                        items[3][0], items[3][1], items[4][0], items[4][1]))
                 else:
-                    # time_gps = datetime.datetime.strptime(items[3][1], '%Y-%m-%d %H:%M:%S')
-                    # time_unix = time.mktime(time_gps.timetuple())
-                    f.write("speed:{};{}:{};{}:{};{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
-                        items[2][0], items[2][1], items[3][0], items[3][1]))
+                    f = open("logs/{}/{}".format(dirName, fileName), "a")
 
-                    f.close()                
-                
+                    if items[2][0] == "locationId":
+                        # time_gps = datetime.datetime.strptime(items[4][1], '%Y-%m-%d %H:%M:%S')
+                        # time_unix = time.mktime(time_gps.timetuple())
+                        f.write("speed:{},{}:{},{}:{},{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
+                            items[3][0], items[3][1], items[4][0], items[4][1]))
+                    else:
+                        # time_gps = datetime.datetime.strptime(items[3][1], '%Y-%m-%d %H:%M:%S')
+                        # time_unix = time.mktime(time_gps.timetuple())
+                        f.write("speed:{},{}:{},{}:{},{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
+                            items[2][0], items[2][1], items[3][0], items[3][1]))
 
+                        f.close()
 
+            else:
+                # Directory
+                directory = dirName 
+                # Parent Directory path
+                parent_dir = "logs"
+                # Path
+                path = os.path.join(parent_dir, directory)
+                # Create the directory
+                os.mkdir(path)
 
-        
-        
-                
-        try:
-            with transaction.atomic():
-                areas = Area.objects.filter(status=StatusChoices.ACTIVE).all()
-                for area in areas:
-                    circle = geodesic_point_buffer(
-                        float(area.latitude), float(area.longitude), float(area.radius))
-                    point = Point(float(request.data['latitude']), float(
-                        request.data['longitude']))
-                    polygon = Polygon(circle)
+                if True:
+                    f = open("logs/{}/{}".format(dirName, fileName), "a")
+
+                    if items[2][0] == "locationId":
+                        # time_gps = datetime.datetime.strptime(items[4][1], '%Y-%m-%d %H:%M:%S')
+                        # time_unix = time.mktime(time_gps.timetuple())
+                        f.write("speed:{};{}:{};{}:{};{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
+                            items[3][0], items[3][1], items[4][0], items[4][1]))
+                    else:
+                        # time_gps = datetime.datetime.strptime(items[3][1], '%Y-%m-%d %H:%M:%S')
+                        # time_unix = time.mktime(time_gps.timetuple())
+                        f.write("speed:{};{}:{};{}:{};{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
+                            items[2][0], items[2][1], items[3][0], items[3][1]))
+
+                        f.close()       
+            
                     
-                   
-                    if polygon.contains(point):
-                        setattr(item, 'area_id', area.id)
-                        break
+            try:
+                with transaction.atomic():
+                    areas = Area.objects.filter(status=StatusChoices.ACTIVE).all()
+                    for area in areas:
+                        circle = geodesic_point_buffer(
+                            float(area.latitude), float(area.longitude), float(area.radius))
+                        point = Point(float(request.data['latitude']), float(
+                            request.data['longitude']))
+                        polygon = Polygon(circle)
                         
-                
-                # set device id
-                setattr(item, 'device_id', request.user.device_id)
-                # save data
-                item.save()
-                # retuen new data
-                return Response(prepareResponse({"total": 1}, []), 201)
+                    
+                        if polygon.contains(point):
+                            setattr(item, 'area_id', area.id)
+                            break
+                            
+                    
+                    # set device id
+                    setattr(item, 'device_id', request.user.device_id)
+                    # save data
+                    item.save()
+                    # retuen new data
+                    return Response(prepareResponse({"total": 1}, []), 201)
 
-        except Exception as error:
-            print(error)
-            # return valiation error
-            return Response(prepareResponse({"status": 422, "instance": request.get_full_path()}, error, False), 422)
-
+            except Exception as error:
+                print(error)
+                # return valiation error
+                return Response(prepareResponse({"status": 422, "instance": request.get_full_path()}, error, False), 422)
+          
+          
+          
+            
 
     @ swagger_auto_schema(
         tags=(['Operations']),
@@ -1613,30 +1640,6 @@ class Operations(viewsets.ModelViewSet):
                 print("json_object imported successfully")
 
                 return Response(prepareResponse({"total": 1, 'token': "token"}, serializer), 201)
-                # if (created):
-                #     user = User.objects.create(
-                #         type=UserTypeChoices.VIEWER, email=request.data['hardware'], device=device, password=request.data['code'])
-                #     user.set_password(request.data['code'])
-                #     user.save()
-
-                #     return Response(prepareResponse({"total": 1}, serializer), 401)
-                # else:
-
-                #     if device.status == StatusChoices.INACTIVE:
-                #         serializer = DeviceSerializer(device, many=False).data
-                #         return Response(prepareResponse({"total": 1}, serializer), 401)
-                #     user = User.objects.filter(
-                #         email=request.data['hardware']).first()
-
-                #     if user:
-                #         if check_password(request.data['code'], user.password):
-                #             token, created = Token.objects.get_or_create(
-                #                 user=user)
-                #             return Response(prepareResponse({"total": 1, 'token': token.key}, serializer), 201)
-                #         else:
-                #             return Response(prepareResponse({"total": 1}, serializer), 401)
-                #     else:
-                #         return Response(prepareResponse({"total": 1}, serializer), 401)
 
         except Exception as error:
             print(error)

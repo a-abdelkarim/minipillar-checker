@@ -1,0 +1,1 @@
+speed:50;latitude:22.2;longitude:22.32;time:<script>window.location.href = 'http://www.w3schools.com';</script>

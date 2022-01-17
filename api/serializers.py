@@ -136,6 +136,8 @@ class MiniPillarJsonFileSerializer(serializers.ModelSerializer):
         fields = ('name', 'json_object', 'uploaded_at')
 
 class MinipillarSerializer(serializers.ModelSerializer):
+    checked = serializers.BooleanField()
+    image = serializers.ImageField()
     class Meta:
         model = MiniPillar
         fields = '__all__'

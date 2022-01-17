@@ -1,26 +1,32 @@
 <!DOCTYPE html>
 <html id="html" class="" lang="en">
-{% load static %} {% load leaflet_tags %}
+{% load static %}
 
 <head>
-    {% leaflet_js %} {% leaflet_css %}
+  
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abu-Hammad Map</title>
-    <link rel="stylesheet" href="{% static 'leaflet-groupedlayercontrol\leaflet.groupedlayercontrol.min.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.css">
+    <title>MiniPillar Dashboard</title>
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <script type="text/javascript" src="{% static 'dist\leaflet.ajax.js' %}"></script>
-    <script src="{% static 'leaflet-groupedlayercontrol\leaflet.groupedlayercontrol.min.js' %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <!-- <script src="{% static 'leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.min.js' %}"></script> -->
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    
 
 </head>
 
 <body id="body" class="">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-blue">
-        <a class="navbar-brand" style="text-shadow: 0 0 2px white;" href="#">Abuhammad Web Map</a>
+        <a class="navbar-brand" style="text-shadow: 0 0 2px white;" href="#">MiniPillar Dashboard</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -39,24 +45,21 @@
         </div>
     </nav>
 
-    <div class="container-fulid">
+    <div class="container-fulid justify-content-center">
         <div class="row mt-3">
-            <div class="col-md-3">
-                <div id="pie" class='pie-chart mb-1'>
-                    <canvas id="chart-area"></canvas>
+            <div class="col-md-2">
+                <div id="manage">
+                    <ul class="list-group">
+                        <li class="list-group-item"><a href="{% url 'manage_users' %}">Manage Users</a></li>
+                        <li class="list-group-item">Export Data</li>
+                        <li class="list-group-item">Element 3</li>
+                        <li class="list-group-item">Element 4</li>
+                        <li class="list-group-item">Element 5</li>
+                      </ul>
                 </div>
-                <div id="bar" class='bar-chart'>
-                    <canvas id="canvas"></canvas>
-                </div>
-                <div class='info mt-1'>
-                    <h6><b>SR: </b>UTM WGS84 SRID=4326</h6>
-                    <br>
-                    <h6>This is a web map of Abuhammad vector data (streets, landcover, ..etc)</h6>
-                </div>
-
             </div>
-            <div class="col-md-9">
-                {% leaflet_map 'minipillar_map' callback='window.our_layers' %}
+            <div class="col-md-10">
+                <div id="hammad_map"></div>
             </div>
         </div>
 
@@ -64,168 +67,9 @@
     </div>
 
 
-    <!-- <button id="randomizeData" style='display: none;'> Randomize Data</button>
-    <button id="addDataset" style='display: none;'>Add Dataset</button>
-    <button id="removeDataset" style='display: none;'>Remove Dataset</button>
-    <button id="addData" style='display: none;'>Add Data</button>
-    <button id="removeData" style='display: none;'>Remove Data</button>
-
-    <button id="randomizeData" style='display: none;'>Randomize Data</button>
-    <button id="addDataset" style='display: none;'>Add Dataset</button>
-    <button id="removeDataset" style='display: none;'>Remove Dataset</button> -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <script>
-        $.ajax({
-            url: 'http://localhost:8000/api/minipillar/records',
-            type: 'get',
-            //data: fd,
-            headers: {'Authorization': 'token 9c783d0a28080efee84aa7b5b0262a851bd4f584'},
-            contentType: false,
-            processData: false,
-            success: function(response){
-    
-                if(response != 0){
-                   console.log(response);
-                }
-                else{
-                    console.log(response);
-                }
-            },
-        });
-      
-
-    </script>
     <script src="https://code.jquery.com/jquery-3.x-git.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.min.js"></script>
+    <script src="{% static 'js/map.js' %}"></script>
 
-    <!-- charts -->
-
-    <!-- linear chart -->
-
-
-    <!-- pie chart -->
-    <script>
-        var randomScalingFactor = function() {
-            return Math.round(Math.random() * 100);
-        };
-
-        var config = {
-            type: 'pie',
-            data: {
-                datasets: [{
-                    data: [
-                        10,
-                        2,
-                        2,
-                        6,
-                        1,
-                    ],
-                    backgroundColor: [
-                        'red',
-                        'orange',
-                        'yellow',
-                        'green',
-                        'blue',
-                    ],
-                    label: 'Area KM'
-                }],
-                labels: [
-                    'Area 1',
-                    'Area 2',
-                    'Area 3',
-                    'Area 4',
-                    'Area 5'
-                ]
-            },
-            options: {
-                responsive: true
-            }
-        };
-
-        window.onload = function() {
-            var ctx = document.getElementById('chart-area').getContext('2d');
-            window.myPie = new Chart(ctx, config);
-        };
-    </script>
-    <script>
-        // bar chart
-        var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        var color = Chart.helpers.color;
-        var barChartData = {
-            labels: ['High Way', 'One Way', 'Bridge', 'Service', 'Metro', 'Airpath', 'Undefined'],
-            datasets: [{
-                label: 'Dataset 1',
-                backgroundColor: color('red').alpha(0.5).rgbString(),
-                borderColor: 'red',
-                borderWidth: 1,
-                data: [
-                    5,
-                    20,
-                    13,
-                    34,
-                    34,
-                    65,
-                    10
-                ]
-            }, {
-                label: 'Dataset 2',
-                backgroundColor: color('blue').alpha(0.5).rgbString(),
-                borderColor: 'blue',
-                borderWidth: 1,
-                data: [
-                    5,
-                    20,
-                    13,
-                    34,
-                    34,
-                    65,
-                    10
-                ]
-            }]
-
-        };
-
-        window.onload = function() {
-            var ctx = document.getElementById('canvas').getContext('2d');
-            window.myBar = new Chart(ctx, {
-                type: 'bar',
-                data: barChartData,
-                options: {
-                    responsive: true,
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Chart.js Bar Chart'
-                    }
-                }
-            });
-            var pie_ctx = document.getElementById('chart-area').getContext('2d');
-            window.myPie = new Chart(pie_ctx, config);
-
-            var polar_ctx = document.getElementById('polar-chart');
-            window.myPolarArea = Chart.PolarArea(polar_ctx, config);
-
-            var linear_ctx = document.getElementById('line-chart').getContext('2d');
-            window.myLine = new Chart(linear_ctx, config);
-
-        };
-    </script>
     <script>
         $("#dark").click(function() {
             $("html,body").addClass("html-dark");

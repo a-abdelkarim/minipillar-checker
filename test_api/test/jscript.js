@@ -12,40 +12,40 @@ function importFilePorcedure(){
     console.log("fd: "+fd[0]);
     console.log("files: "+files);
 
-    // $.ajax({
-    //     url: 'http://localhost:8000/api/minipillar/1/update',
-    //     type: 'put',
-    //     data: fd,
-    //     headers: {'Authorization': 'token 9c783d0a28080efee84aa7b5b0262a851bd4f584'},
-    //     contentType: false,
-    //     processData: false,
-    //     success: function(response){
-
-    //         if(response != 0){
-    //            alert('file uploaded');
-    //         }
-    //         else{
-    //             alert('file not uploaded');
-    //         }
-    //     },
-    // });
     $.ajax({
-        url: 'http://localhost:8000/api/minipillar/records',
-        type: 'get',
-        // data: fd,
-        headers: {'Authorization': 'token d7e27c46a72f556d1ed2005a0578f7bb49733576'},
+        url: 'http://localhost:8000/api/minipillar/1/update',
+        type: 'put',
+        data: fd,
+        headers: {'Authorization': 'token 58d172e97a3da66478f15761f000ac221fb26fbc'},
         contentType: false,
         processData: false,
         success: function(response){
 
             if(response != 0){
-               console.log(response);
+               alert('file uploaded');
             }
             else{
-                console.log(response);
+                alert('file not uploaded');
             }
         },
     });
+    // $.ajax({
+    //     url: 'http://localhost:8000/api/minipillar/records',
+    //     type: 'get',
+    //     // data: fd,
+    //     headers: {'Authorization': 'token 23fe479b3bb49c5a1cc8bb409330b06060430af9'},
+    //     contentType: false,
+    //     processData: false,
+    //     success: function(response){
+
+    //         if(response != 0){
+    //            console.log(response);
+    //         }
+    //         else{
+    //             console.log(response);
+    //         }
+    //     },
+    // });
     
     // clear form after uploading
     clearProcedureModal();
