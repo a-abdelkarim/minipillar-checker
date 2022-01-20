@@ -307,7 +307,7 @@ class MiniPillar(models.Model):
 
     @staticmethod
     def protected():
-        return ['updated_at', 'created_at', 'status']
+        return ['updated_at', 'created_at', 'status', 'created_by']
 
 
 class MiniPillarJsonFile(models.Model):

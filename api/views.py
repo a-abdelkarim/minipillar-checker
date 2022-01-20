@@ -1252,6 +1252,7 @@ class UpdateMiniPillar(views.APIView):
                     item.device = request.user.device
                     item.checked = True
                     item.checked_by = request.user.device.username
+                    # item.created_by = request.user
                     # save data
                     item.save()
                     # GET new data

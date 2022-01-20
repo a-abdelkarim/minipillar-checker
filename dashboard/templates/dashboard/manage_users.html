@@ -19,7 +19,7 @@
 <body id="body" class="">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-blue">
-        <a class="navbar-brand" style="text-shadow: 0 0 2px white;" href="#">MiniPillar Dashboard</a>
+        <a class="navbar-brand" style="text-shadow: 0 0 2px white;" href="{% url 'dashboard' %}">MiniPillar Dashboard</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -38,12 +38,26 @@
         </div>
     </nav>
 
-    <div class="container-fulid justify-content-center">
+    <div class="container-fulid  justify-content-center">
         <div class="row mt-3">
-            <div class="col-md-8">
+            <div class="span6" style="float: none; margin: 0 auto; font-size:larger">User Manager</div>
+        </div>
+        <div class="row mt-3 position-relative">
+            <div class="col-md-12">
                 <div id="manage">
                     <ul class="list-group">
-                      </ul>
+                        <div class="row bg-blue  mt-1 ml-1 mr-1 mb-1 text-light pt-1 pb-1">
+                            <div class="col-md-3">
+                                Username
+                            </div>
+                            <div class="col-md-3">
+                                User Status
+                            </div>
+                            <!-- <div class="col-md-3">
+                                <div > Activ</button>
+                            </div> -->
+                        </div>
+                    </ul>
                 </div>
         </div>
 

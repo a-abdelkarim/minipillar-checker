@@ -35,7 +35,7 @@ SECRET_KEY = 'rxle7_(ah&k-o+3lj=jlw1y-kr9%*$o&pfkuo(93n-at$v9pg9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'mytestapp.io' , 'localhost', 'ae77-156-205-60-212.ngrok.io']
+ALLOWED_HOSTS = ['127.0.0.1', 'mytestapp.io' , '192.168.99.203', 'f117-156-205-17-240.ngrok.io']
 
 
 # Application definition

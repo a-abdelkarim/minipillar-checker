@@ -1,3 +1,6 @@
+const BASE_URL = 'http://3634-102-47-35-234.ngrok.io/';
+
+
 //var geojson;
 var map = L.map('hammad_map').setView([25, 41], 5);
 var street_basemap = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -26,7 +29,7 @@ var baseMaps = {
 L.control.layers(baseMaps).addTo(map);
 
 $.ajax({
-    url: 'http://localhost:8000/api/minipillar/records',
+    url: `${BASE_URL}api/minipillar/records`,
     type: 'get',
     //data: fd,
     headers: {'Authorization': 'token 23fe479b3bb49c5a1cc8bb409330b06060430af9'},

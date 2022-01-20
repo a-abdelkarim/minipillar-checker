@@ -1,5 +1,7 @@
+const BASE_URL = 'http://3634-102-47-35-234.ngrok.io/';
+
 $.ajax({
-    url: 'http://localhost:8000/api/devices/records',
+    url: `${BASE_URL}api/devices/records`,
     type: 'get',
     //data: fd,
     headers: {'Authorization': 'token 23fe479b3bb49c5a1cc8bb409330b06060430af9'},
@@ -15,10 +17,36 @@ $.ajax({
                user = items[item]
                
                 if (user.status == "inactive"){
-                    $( ".list-group" ).append( `<li class="list-group-item"  user_id=${user.device}'>user: ${user.username} ${user.status}  <button class="btn btn-primary" type="button" onclick="active_user(${user.id});">Active</button> </li>` );
+                    $( ".list-group" ).append( `<div class="row mt-1 ml-1 mr-1 mb-1 border-bottom  pt-1 pb-1">
+                                                    <div class="col-md-3">
+                                                        ${user.username}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        ${user.status}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <button class="btn btn-primary" onclick="active_user(${user.id});">Activate</button>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <button class="btn btn-danger" onclick="active_user(${user.id});">Delete</button>
+                                                    </div>
+                                                </div>` );
                             }
                 else if(user.status == "active"){
-                    $( ".list-group" ).append( `<li class="list-group-item"  user_id=${user.device}'>user: ${user.username} ${user.status}  <button class="btn btn-secondary" type="button" onclick="active_user(${user.id});">Inactive</button> </li>` );
+                    $( ".list-group" ).append( `<div class="row ml-1 mr-1 mt-1 mb-1 border-bottom pt-1 pb-1">
+                                                    <div class="col-md-3">
+                                                        ${user.username}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        ${user.status}
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <button class="btn btn-secondary" onclick="active_user(${user.id});">Deactivate</button>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <button class="btn btn-danger" onclick="active_user(${user.id});">Delete</button>
+                                                    </div>
+                                                </div>` );
                             }
                 }
                 
@@ -34,7 +62,7 @@ $.ajax({
 function active_user(id) {
 
     $.ajax({
-        url: `http://localhost:8000/api/devices/${id}/activate`,
+        url: `${BASE_URL}api/devices/${id}/activate`,
         type: 'put',
         //data: fd,
         headers: {'Authorization': 'token 23fe479b3bb49c5a1cc8bb409330b06060430af9'},
