@@ -68,10 +68,16 @@
 
 
     <script src="https://code.jquery.com/jquery-3.x-git.min.js"></script>
+    <script type="text/javascript">
+        var featureCollection = '{{ featureCollection|safe }}';
+        
+        
+    </script>
     <script src="{% static 'js/map.js' %}"></script>
     <script src="{% static 'js/export.js' %}"></script>
 
     <script>
+        
         $("#dark").click(function() {
             $("html,body").addClass("html-dark");
             $("#pie").addClass("pie-chart-dark");

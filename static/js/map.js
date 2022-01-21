@@ -1,4 +1,4 @@
-const BASE_URL = 'http://3634-102-47-35-234.ngrok.io/';
+const BASE_URL = 'http://127.0.0.1:8000/';
 
 
 //var geojson;
@@ -28,27 +28,10 @@ var baseMaps = {
 
 L.control.layers(baseMaps).addTo(map);
 
-$.ajax({
-    url: `${BASE_URL}api/minipillar/records`,
-    type: 'get',
-    //data: fd,
-    headers: {'Authorization': 'token 23fe479b3bb49c5a1cc8bb409330b06060430af9'},
-    contentType: false,
-    processData: false,
-    success: function(response){
+function load_data(){
+    var features = JSON.parse(featureCollection);
+    var geojson = new L.geoJSON(features);
+    geojson.addTo(map)
+};
 
-        if(response != 0){
-           //console.log(response);
-           //console.log(response.meta.featureCollection)
-           var geojson = new L.geoJSON(response.meta.featureCollection);
-           console.log(geojson);
-           geojson.addTo(map)
-           
-        }
-        else{
-            console.log(response);
-        }
-    },
-});
-//geojson.addTo(map);
-//geojson.addTo(map)
+load_data();

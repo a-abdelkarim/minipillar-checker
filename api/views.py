@@ -1312,11 +1312,11 @@ class MiniPillarList(views.APIView):
         
         # create featureCollection
         geoClass = Geography()
-        # get minipillars from db
-        minipillars_object = MiniPillar.objects.all()
-        minipillars_object = MinipillarSerializer(minipillars_object, many=True)
+        # # get minipillars from db
+        # minipillars_object = MiniPillar.objects.all()
+        # minipillars_object = MinipillarSerializer(items, many=True)
         # get data
-        data_object = minipillars_object.data
+        data_object = serializer.data
         # data object to features
         data_features = geoClass.data_to_features(data_object)
         # features to featureCollection
