@@ -22,7 +22,7 @@ body {
 }
 
 #hammad_map {
-    height: 550px;
+    height: 100%;
     border-radius: 10px;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
@@ -34,7 +34,7 @@ body {
 }
 
 .hammad_map-dark {
-    height: 550px;
+    height: 100%;
     border-radius: 10px;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
@@ -44,6 +44,7 @@ body {
     box-shadow: 0 0 10px #064646;
     margin-right: 10px;
 }
+
 
 #manage{
     height: 100%;
@@ -302,4 +303,9 @@ body {
 
 .bg-darkk {
     background-color: #0f3460;
+}
+
+a{
+    text-decoration: none;
+    color: white;
 }

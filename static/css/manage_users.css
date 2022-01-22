@@ -1,0 +1,11 @@
+.user{
+    transition: 0.5s 0.5s 0.5s;
+}
+.user:hover{
+    background-color: #D3E7E0;
+}
+
+.user-header {
+    background-color: #064646;
+    box-shadow: 0 0 10px black;
+}
