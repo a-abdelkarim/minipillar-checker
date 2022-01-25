@@ -35,7 +35,7 @@ SECRET_KEY = 'rxle7_(ah&k-o+3lj=jlw1y-kr9%*$o&pfkuo(93n-at$v9pg9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'mytestapp.io' , '192.168.99.203', 'f117-156-205-17-240.ngrok.io']
+ALLOWED_HOSTS = ['127.0.0.1', 'mytestapp.io' , '192.168.128.106', 'dcd8-197-162-212-130.ngrok.io']
 
 
 # Application definition
@@ -214,6 +214,8 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
 
 AUTH_USER_MODEL = 'api.User'

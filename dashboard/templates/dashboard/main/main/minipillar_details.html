@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  {% load static %}
+  {% load static %} 
 
 <head>
   <meta charset="utf-8">
@@ -273,6 +273,12 @@
                 <div class="col">
                   <h3 class="mb-0">MiniPillar Code: {{ minipillar.code }}</h3>
                 </div>
+                <div class="col">
+                    <h3 class="mb-0">Checked At: {{ minipillar.last_check_at }}</h3>
+                </div>
+                <div class="col">
+                    <h3 class="mb-0">Checked By: {{ minipillar.checked_by }}</h3>
+                </div>
               </div>
             </div>
             <div class="table-responsive">
@@ -288,7 +294,7 @@
                 <tbody>
                   {% for key, value in minipillar.items %}
 
-                    {% if key == "image" or key == "id" %}
+                    {% if key == "id" %}
                     
                     {% else %}
                         <tr>
@@ -303,6 +309,12 @@
                             <td>
                                 no
                             </td>
+                            {% elif key == "image" %}
+                            <td>
+                              <div >
+                                <img src="{{minipillar.image}}" class="rounded" width="100px" height="100px">
+                              </div>
+                            </td>
                             {% else %}
                             <td>
                                 {{value}}
@@ -315,6 +327,7 @@
                   
                 </tbody>
               </table>
+              <input TYPE="button" onClick="window.print()">
             </div>
           </div>
         </div>

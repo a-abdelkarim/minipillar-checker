@@ -17,6 +17,19 @@ def dashboard(request):
     checked_count = MiniPillar.objects.filter(checked=True).count()
     # GET UNCHECKED count
     unchecked_count = items.count() - checked_count
+    # Get active users
+    active_users = Device.objects.filter(status="active").all().order_by('-updated_at')[:6]
+    # get users data
+    active_users = DeviceSerializer(active_users, many=True).data
+    # get total mp checked by user
+    active_users_list = []
+    for user in active_users:
+        user_id = dict(user)["id"]
+        user_checked_count = MiniPillar.objects.filter(device=user_id).count()
+        user_obj = dict(user)
+        user_obj["checked_mp"] = user_checked_count
+        active_users_list.append(user_obj)
+        # print(user_obj)
     # GET ACTIVE USERS COUNT
     total_active_users = Device.objects.filter(status="active").count()
     # GET all records from the table with order and pegnation
@@ -39,13 +52,13 @@ def dashboard(request):
     for item in latest_minipillars_data:
         latest_checked_minipillars_list.append(dict(item)) 
         
-    
-    
+
     context = {
         "featureCollection": json.dumps(data_featureCollection),
         "minipillars_count": items.count(),
         "total_checked_minipillars":checked_count,
         "total_unchecked_minipillars":unchecked_count,
+        "active_users":active_users_list,
         "total_active_users": total_active_users,
         "latest_minipillars": latest_checked_minipillars_list
     }
@@ -54,16 +67,38 @@ def dashboard(request):
 
 # user manager
 @login_required
-def manage_users(request):
+def user_list(request):
     # GET total records
-    items = Device.objects.all()
+    items = Device.objects.all().order_by("-updated_at")
     serializer = DeviceSerializer(items, many=True)
     
     
     context = {
-        "devices": json.dumps(serializer.data)
+        "users": serializer.data
     }
-    return render(request, 'dashboard/users/manage_users.html', context)
+    return render(request, 'dashboard/users/user_list.html', context)
+
+
+@login_required
+def user_activity_list(request):
+    active_users = Device.objects.filter(status="active").all().order_by('-updated_at')
+    # get users data
+    active_users = DeviceSerializer(active_users, many=True).data
+    # get total mp checked by user
+    active_users_list = []
+    for user in active_users:
+        user_id = dict(user)["id"]
+        user_checked_count = MiniPillar.objects.filter(device=user_id).count()
+        user_obj = dict(user)
+        user_obj["checked_mp"] = user_checked_count
+        active_users_list.append(user_obj)
+        
+    template = 'dashboard/users/user_activity_list.html'
+    context = {
+        "user_activity_list": active_users_list
+    }
+    
+    return render(request, template, context)
 
 
 @login_required
@@ -85,7 +120,7 @@ def user_activate(request, pk):
             "username": user_data["username"]
         }
         
-        return render(request, "dashboard/users/activate_success.html", context)
+        return redirect("user_list")
     else:
         return render(request, "dashboard/users/activate_failed.html")
     
@@ -109,7 +144,7 @@ def user_deactivate(request, pk):
             "username": user_data["username"]
         }
         
-        return redirect("manage_users")
+        return redirect("user_list")
     else:
         return render(request, "dashboard/users/activate_failed.html")
     
@@ -142,7 +177,7 @@ def minipillar_details(request, id):
     
     template = "dashboard/main/main/minipillar_details.html"
     context={
-        "minipillar":dict(minipillar_data)
+        "minipillar":dict(minipillar_data),
     }
     
     return render(request, template, context)

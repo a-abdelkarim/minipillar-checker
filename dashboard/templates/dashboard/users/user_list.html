@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="Start your development with a Dashboard for Bootstrap 4.">
   <meta name="author" content="Creative Tim">
-  <title>Dashboard | Home</title>
+  <title>Dashboard | Users</title>
   <!-- Favicon -->
   <link rel="icon" href="{% static 'img/brand/favicon.png' %}" type="image/png">
   <!-- Fonts -->
@@ -17,12 +17,6 @@
   <link rel="stylesheet" href="{% static 'vendor/@fortawesome/fontawesome-free/css/all.min.css' %}" type="text/css">
   <!-- Page plugins -->
   <!-- Argon CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-    crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-   crossorigin=""></script>
   <link rel="stylesheet" href="{% static 'css/argon.css' %}" type="text/css">
 </head>
 
@@ -86,7 +80,7 @@
                       <div class="col ml--2">
                         <div class="d-flex justify-content-between align-items-center">
                           <div>
-                            <h4 class="mb-0 text-sm">Admin</h4>
+                            <h4 class="mb-0 text-sm">John Snow</h4>
                           </div>
                           <div class="text-right text-muted">
                             <small>2 hrs ago</small>
@@ -231,7 +225,7 @@
                     <img alt="Image placeholder" src="{% static 'img/theme/team-4.jpg' %}">
                   </span>
                   <div class="media-body  ml-2  d-none d-lg-block">
-                    <span class="mb-0 text-sm  font-weight-bold">Admin</span>
+                    <span class="mb-0 text-sm  font-weight-bold">John Snow</span>
                   </div>
                 </div>
               </a>
@@ -256,7 +250,7 @@
                   <span>Support</span>
                 </a>
                 <div class="dropdown-divider"></div>
-                <a href="{% url 'logout' %}" class="dropdown-item">
+                <a href="#!" class="dropdown-item">
                   <i class="ni ni-user-run"></i>
                   <span>Logout</span>
                 </a>
@@ -268,196 +262,16 @@
     </nav>
     <!-- Header -->
     <!-- Header -->
-    <div class="header bg-primary pb-6">
-      <div class="container-fluid">
-        <div class="header-body">
-          <!-- Card stats -->
-          <div class="row">
-            <div class="col-xl-3 col-md-6">
-              <div class="card card-stats">
-                <!-- Card body -->
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Total MiniPillars</h5>
-                      <span class="h2 font-weight-bold mb-0">{{ minipillars_count }}</span>
-                    </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
-                        <i class="ni ni-active-40"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-sm">
-                    <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                    <span class="text-nowrap">Since last month</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-3 col-md-6">
-              <div class="card card-stats">
-                <!-- Card body -->
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Total Checked</h5>
-                      <span class="h2 font-weight-bold mb-0">{{ total_checked_minipillars }}</span>
-                    </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
-                        <i class="ni ni-chart-pie-35"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-sm">
-                    <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                    <span class="text-nowrap">Since last month</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-3 col-md-6">
-              <div class="card card-stats">
-                <!-- Card body -->
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Total Unchecked</h5>
-                      <span class="h2 font-weight-bold mb-0">{{ total_unchecked_minipillars }}</span>
-                    </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                        <i class="ni ni-money-coins"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-sm">
-                    <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                    <span class="text-nowrap">Since last month</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-3 col-md-6">
-              <div class="card card-stats">
-                <!-- Card body -->
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Total Active Users</h5>
-                      <span class="h2 font-weight-bold mb-0">{{ total_active_users }}</span>
-                    </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
-                        <i class="ni ni-chart-bar-32"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-sm">
-                    <span class="text-nowrap"><a href="{% url 'user_list' %}">Manage Users</a></span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    
     <!-- Page content -->
     <div class="container-fluid mt--6">
       <div class="row">
-        <div class="col-xl-2"></div>
-        <div class="col-xl-8">
-          <div class="card bg-default">
-            <div class="card-header bg-transparent">
-              <div class="row align-items-center">
-                <div class="col">
-                  <h5 class="h3 text-white mb-0">MiniPillar Map</h5>
-                </div>
-                <div class="col">
-                  <ul class="nav nav-pills justify-content-end">
-                    <li class="nav-item mr-2 mr-md-0" data-toggle="chart" data-target="#chart-sales-dark" data-update='{"data":{"datasets":[{"data":[0, 20, 10, 30, 15, 40, 20, 60, 60]}]}}' data-prefix="$" data-suffix="k">
-                      <a href="#" class="nav-link py-2 px-3 active" data-toggle="tab">
-                        <span class="d-none d-md-block">Month</span>
-                        <span class="d-md-none">M</span>
-                      </a>
-                    </li>
-                    <li class="nav-item" data-toggle="chart" data-target="#chart-sales-dark" data-update='{"data":{"datasets":[{"data":[0, 20, 5, 25, 10, 30, 15, 40, 40]}]}}' data-prefix="$" data-suffix="k">
-                      <a href="#" class="nav-link py-2 px-3" data-toggle="tab">
-                        <span class="d-none d-md-block">Week</span>
-                        <span class="d-md-none">W</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="card-body">
-              <!-- Chart -->
-              <div class="chart" id="map">
-                
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-xl-6">
+        <div class="col-xl-12">
           <div class="card">
             <div class="card-header border-0">
               <div class="row align-items-center">
                 <div class="col">
-                  <h3 class="mb-0">Last Checked</h3>
-                </div>
-                <div class="col text-right">
-                  <a href="{% url 'minipillar_checked_list' %}" class="btn btn-sm btn-primary">See all</a>
-                </div>
-              </div>
-            </div>
-            <div class="table-responsive">
-              <!-- Projects table -->
-              <table class="table align-items-center table-flush">
-                <thead class="thead-light">
-                  <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Checked By</th>
-                    <th scope="col">Checked at</th>
-                    <th scope="col">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for minipillar in latest_minipillars %}
-                  <tr>
-                    <th scope="row">
-                      {{ minipillar.id }}
-                    </th>
-                    <td>
-                      {{ minipillar.checked_by }}
-                    </td>
-                    <td>
-                      {{ minipillar.last_check_at }}
-                    </td>
-                    <td>
-                      <a href="{% url 'minipillar_details' minipillar.id %}" class="btn btn-sm btn-primary">View</a>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                  
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-6">
-          <div class="card">
-            <div class="card-header border-0">
-              <div class="row align-items-center">
-                <div class="col">
-                  <h3 class="mb-0">Users Activity</h3>
-                </div>
-                <div class="col text-right">
-                  <a href="{% url 'user_activity_list' %}" class="btn btn-sm btn-primary">See all</a>
+                  <h3 class="mb-0">User Manager</h3>
                 </div>
               </div>
             </div>
@@ -467,28 +281,31 @@
                 <thead class="thead-light">
                   <tr>
                     <th scope="col">Username</th>
-                    <th scope="col">Total Checked</th>
-                    <th scope="col"></th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">User Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                {% for user in active_users %}
+                  {% for user in users %}
                   <tr>
                     <th scope="row">
                       {{ user.username }}
                     </th>
                     <td>
-                      {{ user.checked_mp }}
+                      {{ user.full_name }}
                     </td>
                     <td>
-                      <div class="d-flex align-items-center">
-                        <span class="mr-2">60%</span>
-                        <div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"></div>
-                          </div>
-                        </div>
-                      </div>
+                      {{ user.email }}
+                    </td>
+                    <td>
+                      {% if user.status == "active" %}
+                        <a href="{% url 'user_deactivate' user.id %}" class="btn btn-sm btn-primary">Active</a>
+                      {% else %}
+                        <a href="{% url 'user_activate' user.id %}" class="btn btn-sm btn-secondary">inactive</a>
+                      {% endif %}
+                      
+                      <!-- <i class="fas fa-arrow-up text-success mr-3"></i> 46,53% -->
                     </td>
                   </tr>
                   {% endfor %}
@@ -499,32 +316,31 @@
           </div>
         </div>
       </div>
-           <!-- Footer -->
-           <footer class="footer pt-0">
-            <div class="row align-items-center justify-content-lg-between">
-              <div class="col-lg-6">
-                <div class="copyright text-center  text-lg-left  text-muted">
-                  &copy; 2020 <a href="#" class="font-weight-bold ml-1" target="_blank">AJC Consult</a>
-                </div>
-              </div>
-              <div class="col-lg-6">
-                <ul class="nav nav-footer justify-content-center justify-content-lg-end">
-                  <li class="nav-item">
-                    <a href="#" class="nav-link" target="_blank">AJC Consult</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#" class="nav-link" target="_blank">About Us</a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#" class="nav-link" target="_blank">Blog</a>
-                  </li>
-                </ul>
-              </div>
+      <!-- Footer -->
+      <footer class="footer pt-0">
+        <div class="row align-items-center justify-content-lg-between">
+          <div class="col-lg-6">
+            <div class="copyright text-center  text-lg-left  text-muted">
+              &copy; 2020 <a href="#" class="font-weight-bold ml-1" target="_blank">AJC Consult</a>
             </div>
-          </footer>
+          </div>
+          <div class="col-lg-6">
+            <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+              <li class="nav-item">
+                <a href="#" class="nav-link" target="_blank">AJC Consult</a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link" target="_blank">About Us</a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link" target="_blank">Blog</a>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-
+      </footer>
+    </div>
+  </div>
   <!-- Core -->
   <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
   <script src="{% static 'vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
@@ -534,12 +350,8 @@
   <!-- Optional JS -->
   <script src="{% static 'vendor/chart.js/dist/Chart.min.js' %}"></script>
   <script src="{% static 'vendor/chart.js/dist/Chart.extension.js' %}"></script>
-  <!-- JS -->
+  <!--JS -->
   <script src="{% static 'js/argon.js' %}"></script>
-  <script type="text/javascript">
-    var featureCollection = '{{ featureCollection|safe }}';
-  </script>
-  <script src="{% static 'js/map.js' %}"></script>
 </body>
 
 </html>

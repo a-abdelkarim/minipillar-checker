@@ -235,7 +235,7 @@ class MiniPillar(models.Model):
     subMiniPilar = models.CharField(max_length=50, blank=True, null=True)
     manuf_code = models.CharField(max_length=50, blank=True, null=True)
     manuf_year = models.CharField(max_length=50, blank=True, null=True)
-    image = models.ImageField(upload_to="static/upload/imgs/", default="static/upload/imgs/no_img.png")
+    image = models.ImageField(upload_to="static/upload/imgs/", default="media/minipillar/upload/imgs/no_img.png")
     device = models.ForeignKey(Device, on_delete=models.CASCADE,  null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=False)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL,  null=True, blank=True)
