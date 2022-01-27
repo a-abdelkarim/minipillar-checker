@@ -100,6 +100,21 @@ def user_activity_list(request):
     
     return render(request, template, context)
 
+@login_required
+def user_checked_list(request, pk):
+    # get minipillars checked by user
+    minipillars = MiniPillar.objects.filter(device=pk).all()
+    serializer = MinipillarSerializer(minipillars, many=True)
+    minipillars_data = serializer.data
+    # print(dict(minipillars_data))
+    template = "dashboard/users/user_checked_list.html"
+    context = {
+        "minipillars": minipillars_data
+    }
+    
+    return render(request, template, context)
+    
+
 
 @login_required
 def user_activate(request, pk):
