@@ -3335,15 +3335,19 @@ fieldset:disabled a.btn
 .btn-primary
 {
     color: #fff;
-    border-color: #5e72e4;
-    background-color: #5e72e4;
+    border-color: #1B263B;
+    /* border-color: #5e72e4; */
+    background-color: #1B263B;
+    /* background-color: #5e72e4; -- ahmed */
     box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
 }
 .btn-primary:hover
 {
     color: #fff;
-    border-color: #5e72e4; 
-    background-color: #5e72e4;
+    border-color: #0b4281; 
+    /* border-color: #5e72e4;  */
+    background-color: #0b4281;
+    /* background-color: #5e72e4; */
 }
 .btn-primary:focus,
 .btn-primary.focus
@@ -8753,7 +8757,8 @@ a.close.disabled
 
 .bg-primary
 {
-    background-color: #5e72e4 !important;
+    background-color: #1B263B !important;
+    /* background-color: #5e72e4 !important; --ahmed */ 
 }
 
 a.bg-primary:hover,
