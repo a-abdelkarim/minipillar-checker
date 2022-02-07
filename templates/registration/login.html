@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  {% load static %}
+  {% load static %} {% load widget_tweaks %}
 
   <head>
     <meta charset="utf-8">
@@ -104,7 +104,7 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                     </div>
-                    {{ form.username }}
+                    {{ form.username|attr:"class:form-control"|attr:"placeholder:username"|attr:"type:text" }}
                   </div>
                 </div>
                 <div class="form-group">
@@ -112,7 +112,7 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                     </div>
-                    {{ form.password }}
+                    {{ form.password|attr:"class:form-control"|attr:"placeholder:password"|attr:"type:password" }}
                   </div>
                 </div>
                 <div class="custom-control custom-control-alternative custom-checkbox">

@@ -1,0 +1,74 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}
+Minipillar Details
+{% endblock title %}
+{% block content %}
+<div class="container-fluid mt--6">
+  <div class="row">
+        <div class="col-xl-12">
+          <div class="card">
+            <div class="card-header border-0">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h3 class="mb-0">MiniPillar Code: {{ minipillar.code }}</h3>
+                </div>
+                <div class="col">
+                    <h3 class="mb-0">Checked At: {{ minipillar.last_check_at }}</h3>
+                </div>
+                <div class="col">
+                    <h3 class="mb-0">Checked By: {{ minipillar.checked_by }}</h3>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <!-- Projects table -->
+              <table class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">Key</th>
+                    <th scope="col">Value</th>
+                    
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for key, value in minipillar.items %}
+
+                    {% if key == "id" %}
+                    
+                    {% else %}
+                        <tr>
+                            <th scope="row">
+                            {{ key }}
+                            </th>
+                            {% if value == "True" or value == "true" or value == True %}
+                            <td>
+                            yes
+                            </td>
+                            {% elif value == "False" or value == "false"  or value == False %}
+                            <td>
+                                no
+                            </td>
+                            {% elif key == "image" %}
+                            <td>
+                              <div class="">
+                                <img src="{{minipillar.image}}" class="rounded" width="100px" height="100px">
+                              </div>
+                            </td>
+                            {% else %}
+                            <td>
+                                {{value}}
+                            </td>
+                            {% endif %}
+                        </tr>
+                    {% endif %}
+
+                  {% endfor %}
+                  
+                </tbody>
+              </table>
+              <input TYPE="button" onClick="window.print()" value="Print" class="btn btn-sm btn-primary">
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock content %}

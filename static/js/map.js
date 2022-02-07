@@ -32,26 +32,7 @@ var baseMaps = {
 L.control.layers(baseMaps).addTo(map);
 }
 
-// function icon_create(checked){
-    
-//     if (checked){
-//         var icon_url = 'static\\icons\\location-pin\\pin-red.svg'
-//     } else {
-//         var icon_url = ' static\\icons\\location-pin\\unchecked.svg'
-//     }
-//     var icon = L.icon({
-//         iconUrl: icon_url,
-
-//         iconSize:     [38, 95], // size of the icon
-//         shadowSize:   [50, 64], // size of the shadow
-//         iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-//         shadowAnchor: [4, 62],  // the same for the shadow
-//         popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
-//     });
-
-//     return icon;
-// }
-
+// loading map data ...
 function load_map_data(){
     var features = JSON.parse(featureCollection);
     
@@ -62,10 +43,15 @@ function load_map_data(){
         var icon = icon_create(checked);
         var geojson = new L.geoJSON(feature, {
             pointToLayer: function(feature,latlng){
-              return L.marker(latlng,{icon: icon});
+                return L.marker(latlng,{icon: icon});
             },
             onEachFeature: function (feature, layer) {
-                layer.bindPopup('<h1>'+feature.properties.code+'</h1><p>checked by: '+feature.properties.checked_by+'</p>' + `<div class="col text-right"><a target="_blank" href="minipillar/${mp_id}/" class="btn btn-sm btn-primary">View</a></div>`);
+                if (checked){
+                    layer.bindPopup('<h1>'+feature.properties.code+'</h1><p>checked by: '+feature.properties.checked_by+'</p>' + `<div class="col text-right"><a target="_blank" href="minipillar/${mp_id}/" class="btn btn-sm btn-primary">View</a></div>`);
+                } else{
+                    layer.bindPopup('<h3>Unchecked</h3>');
+                }
+                
               }
           });
         geojson.addTo(map);

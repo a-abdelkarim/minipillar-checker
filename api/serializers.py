@@ -28,35 +28,6 @@ class ChangePasswordSerializer(serializers.Serializer):
         return value
 
 
-""""""""""""""""""""""""""""""
-# groups .
-""""""""""""""""""""""""""""""
-
-
-class GroupSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Group
-        fields = '__all__'
-
-
-class GroupListSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Group
-        fields = ('id', 'name')
-
-
-""""""""""""""""""""""""""""""
-# areas .
-""""""""""""""""""""""""""""""
-
-
-class AreaSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Area
-        fields = '__all__'
 
 
 """"""""""""""""""""""""""""""
@@ -65,28 +36,8 @@ class AreaSerializer(serializers.ModelSerializer):
 
 
 class DeviceSerializer(serializers.ModelSerializer):
-    group_id = serializers.IntegerField(required=False)
-    group = GroupSerializer(many=False)
-
     class Meta:
         model = Device
-        fields = '__all__'
-
-
-""""""""""""""""""""""""""""""
-# locations .
-""""""""""""""""""""""""""""""
-
-
-class LocationSerializer(serializers.ModelSerializer):
-    area_id = serializers.IntegerField(required=False)
-    area = AreaSerializer(many=False)
-
-    device_id = serializers.IntegerField(required=False)
-    device = DeviceSerializer(many=False)
-
-    class Meta:
-        model = Location
         fields = '__all__'
 
 

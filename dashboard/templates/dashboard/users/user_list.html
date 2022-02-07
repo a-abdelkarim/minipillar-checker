@@ -1,4 +1,7 @@
 {% extends "dashboard/base.html" %}
+{% block title %}
+  User Manager
+{% endblock title %}
 {% block content %}
 <div class="container-fluid mt--6">
   <div class="row">
@@ -52,4 +55,27 @@
       </div>
     </div>
   </div>
-  {% endblock content %}
+
+<!-- pagination -->
+{% if users.has_other_pages %}
+  <ul class="pagination">
+    {% if users.has_previous %}
+      <li class="btn btn-sm btn-primary m-1"><a href="?page={{ users.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled btn btn-sm btn-secondary m-1"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in users.paginator.page_range %}
+      {% if users.number == i %}
+        <li class="active btn btn-sm btn-secondary m-1"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li class="m-1"><a class="btn btn-sm btn-primary" href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if users.has_next %}
+      <li class="m-1"><a class="btn btn-sm btn-primary m-1" href="?page={{ users.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="btn btn-sm btn-secondary m-1" class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+{% endblock content %}

@@ -1,0 +1,78 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}
+  Latest Checked
+{% endblock title %}
+{% block content %}
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Last Check</h3>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <!-- Projects table -->
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Checked By</th>
+                <th scope="col">Checked at</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for minipillar in latest_minipillars %}
+              <tr>
+                <th scope="row">
+                  {{ minipillar.id }}
+                </th>
+                <td>
+                  {{ minipillar.checked_by }}
+                </td>
+                <td>
+                  {{ minipillar.last_check_at }}
+                </td>
+                <td>
+                  
+                    <a href="{% url 'minipillar_details' minipillar.id %}" class="btn btn-sm btn-primary">View</a>
+                  
+                  <!-- <i class="fas fa-arrow-up text-success mr-3"></i> 46,53% -->
+                </td>
+              </tr>
+              {% endfor %}
+              
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- pagination -->
+{% if latest_minipillars.has_other_pages %}
+<ul class="pagination">
+  {% if latest_minipillars.has_previous %}
+    <li class="btn btn-sm btn-primary m-1" ><a class="" href="?page={{ users.previous_page_number }}">&laquo;</a></li>
+  {% else %}
+    <li class="disabled btn btn-sm btn-secondary m-1"><span>&laquo;</span></li>
+  {% endif %}
+  {% for i in latest_minipillars.paginator.page_range %}
+    {% if latest_minipillars.number == i %}
+      <li class="active btn btn-sm btn-secondary m-1"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+    {% else %}
+      <li class="m-1" ><a class="btn btn-sm btn-primary" href="?page={{ i }}">{{ i }}</a></li>
+    {% endif %}
+  {% endfor %}
+  {% if latest_minipillars.has_next %}
+    <li class="m-1" ><a class="btn btn-sm btn-primary" href="?page={{ users.next_page_number }}">&raquo;</a></li>
+  {% else %}
+    <li class="btn btn-sm btn-secondary m-1" class="disabled"><span>&raquo;</span></li>
+  {% endif %}
+</ul>
+{% endif %}
+{% endblock content %}

@@ -1,5 +1,6 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from api.models import Device, MiniPillar
 from api.serializers import DeviceSerializer, MinipillarSerializer
 from modules.geography import Geography
@@ -62,19 +63,30 @@ def dashboard(request):
         "total_active_users": total_active_users,
         "latest_minipillars": latest_checked_minipillars_list
     }
-    return render(request, 'dashboard/main/main/dashboard.html', context)
+    template = 'dashboard/main/main/dashboard.html'
+    
+    return render(request, template, context)
 
 
 # user manager
 @login_required
 def user_list(request):
     # GET total records
-    items = Device.objects.all().order_by("-updated_at")
-    serializer = DeviceSerializer(items, many=True)
+    user_list = Device.objects.all().order_by("-updated_at")
+    # create pagination
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(user_list, 10)
+    try:
+        users = paginator.page(page)
+    except PageNotAnInteger:
+        users = paginator.page(1)
+    except EmptyPage:
+        users = paginator.page(paginator.num_pages)
     
     
     context = {
-        "users": serializer.data
+        "users": users,
     }
     return render(request, 'dashboard/users/user_list.html', context)
 
@@ -93,9 +105,21 @@ def user_activity_list(request):
         user_obj["checked_mp"] = user_checked_count
         active_users_list.append(user_obj)
         
+    # create pagination
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(active_users_list, 10)
+    try:
+        users = paginator.page(page)
+    except PageNotAnInteger:
+        users = paginator.page(1)
+    except EmptyPage:
+        users = paginator.page(paginator.num_pages)
+        
+        
     template = 'dashboard/users/user_activity_list.html'
     context = {
-        "user_activity_list": active_users_list
+        "user_activity_list": users
     }
     
     return render(request, template, context)
@@ -104,12 +128,21 @@ def user_activity_list(request):
 def user_checked_list(request, pk):
     # get minipillars checked by user
     minipillars = MiniPillar.objects.filter(device=pk).all()
-    serializer = MinipillarSerializer(minipillars, many=True)
-    minipillars_data = serializer.data
-    # print(dict(minipillars_data))
+    
+    # create pagination
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(minipillars, 10)
+    try:
+        minipillars = paginator.page(page)
+    except PageNotAnInteger:
+        minipillars = paginator.page(1)
+    except EmptyPage:
+        minipillars = paginator.page(paginator.num_pages)
+    
     template = "dashboard/users/user_checked_list.html"
     context = {
-        "minipillars": minipillars_data
+        "minipillars": minipillars
     }
     
     return render(request, template, context)
@@ -170,19 +203,24 @@ def user_deactivate(request, pk):
 def minipillar_checked_list(request):
     # get latest checked minipillars
     latest_minipillars = MiniPillar.objects.filter(checked=True).all().order_by('-last_check_at')
-    latest_minipillars_object =  MinipillarSerializer(latest_minipillars, many=True)
-    latest_minipillars_data = latest_minipillars_object.data
+
+    # create pagination
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(latest_minipillars, 10)
+    try:
+        latest_minipillars = paginator.page(page)
+    except PageNotAnInteger:
+        latest_minipillars = paginator.page(1)
+    except EmptyPage:
+        latest_minipillars = paginator.page(paginator.num_pages)
     
-    # get latest checked minipillars
-    latest_checked_minipillars_list = []
-    for item in latest_minipillars_data:
-        latest_checked_minipillars_list.append(dict(item))
-        
+    template = "dashboard/minipillars/latest_checked.html"
     context = {
-        "latest_minipillars": latest_checked_minipillars_list
+        "latest_minipillars": latest_minipillars
     }
         
-    return render(request, "dashboard/main/main/latest_checked.html", context)
+    return render(request, template, context)
 
 
 def minipillar_details(request, id):
@@ -194,6 +232,23 @@ def minipillar_details(request, id):
     context={
         "minipillar":dict(minipillar_data),
     }
+    
+    return render(request, template, context)
+
+
+""""""""""""""""""""""""
+# PDF Report
+""""""""""""""""""""""""
+def minipillar_report(request, mp_id):
+    minipillar = MiniPillar.objects.get(id=mp_id)
+    minipillar_serializer = MinipillarSerializer(minipillar, many=False)
+    minipillar_data = minipillar_serializer.data
+    
+    context = {
+        "minipillar": dict(minipillar_data)
+    }
+    
+    template = "dashboard/minipillars/report.html"
     
     return render(request, template, context)
     

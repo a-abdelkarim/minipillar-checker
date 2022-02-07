@@ -408,383 +408,6 @@ class users(viewsets.ModelViewSet):
 
 
 """"""""""""""""""""""""""""""
-# groups .
-""""""""""""""""""""""""""""""
-
-
-class groups(viewsets.ModelViewSet):
-    permission_classes = [administrator]
-    parser_classes = [JSONParser]
-
-    @ swagger_auto_schema(
-        tags=(['groups']),
-        responses=recordsResponseSchema(GroupSerializer)
-    )
-    @ action(detail=True, methods=['GET'])
-    def records(self, request):
-        """
-        List all groups.
-        """
-        # GET total records
-        items = Group.objects.all()
-        total = items.count()
-        # create pegnation [ start record ]
-        start = ((0 if ('page' not in request.GET)
-                  else int(request.GET['page']) - 1)) * settings.PER_PAGE
-        # create pegnation [ end record ]
-        end = start + settings.PER_PAGE
-
-        # sort update
-        if 'order' in request.GET:
-            if request.GET['order'].find('asc') != -1:
-                order = "-" + request.GET['order'].split('.')[0]
-            else:
-                order = request.GET['order'].split('.')[0]
-        else:
-            # if not order data will order by ID DESC
-            order = '-id'
-
-        # multi search for the data
-        if 'search' in request.GET and len(request.GET['search'].split(',')) >= 1:
-            # Turn list of values into list of Q objects
-            # return Response(request.GET['search'].split(','))
-            queries = [Q(name__contains=value)
-                       for value in request.GET['search'].split(',')]
-            # Take one Q object from the list
-            initQuery = queries.pop()
-            # Or the Q object with the ones remaining in the list
-            for query in queries:
-                initQuery |= query
-            items = items.filter(initQuery)
-
-        # GET all records from the table with order and pegnation
-        items = items.order_by(order)[start:end]
-
-        serializer = GroupSerializer(items, many=True)
-        # return the data
-        return Response(prepareResponse({"total": total, "count": settings.PER_PAGE, "page":   1 if ('page' not in request.GET) else request.GET['page']}, serializer.data))
-
-    @ swagger_auto_schema(
-        tags=(['groups']),
-        responses=recordResponseSchema(GroupSerializer)
-    )
-    @ action(detail=True, methods=['GET'])
-    def record(self, request, id=None):
-        """
-        GET group by id .
-        """
-        # GET records from table
-        item = Group.objects.filter(id=id).first()
-
-        if item:
-            serializer = GroupSerializer(item, many=False)
-            return Response(prepareResponse({"total": 1}, serializer.data))
-        # if record not found
-        else:
-            return Response(prepareResponse({"status": 404, "instance": request.get_full_path()}, {}, False), 404)
-
-    @ swagger_auto_schema(
-        tags=(['groups']),
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'name': openapi.Schema(type=openapi.TYPE_STRING),
-                'description': openapi.Schema(type=openapi.TYPE_STRING),
-            }, required=["name"],
-        ),
-        responses=createResponseSchema(GroupSerializer)
-    )
-    @ action(detail=True, methods=['POST'])
-    @ transaction.atomic
-    def create(self, request):
-        """
-        create new groups.
-        """
-        item = Group()
-        # create all from post
-        for attr, value in request.data.items():
-            # if field is allowed
-            if attr not in Group.protected():
-                setattr(item, attr, value)
-        try:
-            with transaction.atomic():
-
-                # save data
-                item.save()
-                # GET new data
-                serializer = GroupSerializer(item, many=False)
-                # retuen new data
-                return Response(prepareResponse({"total": 1}, serializer.data), 201)
-
-        except Exception as error:
-            print(error)
-            # return valiation error
-            return Response(prepareResponse({"status": 422, "instance": request.get_full_path()}, error, False), 422)
-
-    @ swagger_auto_schema(
-        tags=(['groups']),
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'name': openapi.Schema(type=openapi.TYPE_STRING),
-                'description': openapi.Schema(type=openapi.TYPE_STRING),
-            },
-            required=["name", 'type'],
-        ),
-        responses=createResponseSchema(GroupSerializer)
-    )
-    @ action(detail=True, methods=['PUT'])
-    @ transaction.atomic
-    def update(self, request, id=None):
-        """
-        update group by id .
-        """
-        # GET records from table
-        item = Group.objects.get(id=id)
-        if item:
-            # update all from post
-            for attr, value in request.data.items():
-                # if field is allowed
-                if attr not in Group.protected():
-                    setattr(item, attr, value)
-            try:
-                with transaction.atomic():
-                    # save data
-                    item.save()
-                    # GET new data
-                    serializer = GroupSerializer(item, many=False)
-                    # retuen new data
-                    return Response(prepareResponse({"total": 1}, serializer.data), 201)
-            except Exception as error:
-                # return valiation error
-                return Response(prepareResponse({"status": 422, "instance": request.get_full_path()}, error, False), 422)
-        # if record not found
-        else:
-            return Response(prepareResponse({"status": 404, "instance": request.get_full_path()}, {}, False), 404)
-
-    @ swagger_auto_schema(
-        tags=(['groups']),
-        responses=deleteResponseSchema()
-    )
-    @ action(detail=True, methods=['DELETE'])
-    @ transaction.atomic
-    def delete(self, request, id=None):
-        """
-        delete group by id .
-        """
-        # GET records from table
-        item = Group.objects.filter(id=id).first()
-        if item:
-            with transaction.atomic():
-                # delete record
-                Group.objects.filter(id=id).update(
-                    status=StatusChoices.DELETED)
-
-                return Response(prepareResponse({"total": 0}, {}), 201)
-        # if record not found
-        else:
-            return Response(prepareResponse({"status": 404, "instance": request.get_full_path()}, {}, False), 404)
-
-    @swagger_auto_schema(
-        tags=(['groups']),
-        responses=listResponseSchema(GroupListSerializer)
-    )
-    @action(detail=True, methods=['GET'])
-    def list(self, request):
-        """
-        List all groups.
-        """
-        # GET total records
-        items = Group.objects.all()
-
-        serializer = GroupListSerializer(items, many=True)
-        # return the data
-        return Response(prepareResponse({"total": items.count(), "count": settings.PER_PAGE}, serializer.data))
-
-
-""""""""""""""""""""""""""""""
-# areas .
-""""""""""""""""""""""""""""""
-
-
-class areas(viewsets.ModelViewSet):
-    permission_classes = [administrator]
-    parser_classes = [JSONParser]
-
-    @ swagger_auto_schema(
-        tags=(['areas']),
-        responses=recordsResponseSchema(AreaSerializer)
-    )
-    @ action(detail=True, methods=['GET'])
-    def records(self, request):
-        """
-        List all areas.
-        """
-        # GET total records
-        items = Area.objects.all()
-        total = items.count()
-        # create pegnation [ start record ]
-        start = ((0 if ('page' not in request.GET)
-                  else int(request.GET['page']) - 1)) * settings.PER_PAGE
-        # create pegnation [ end record ]
-        end = start + settings.PER_PAGE
-
-        # sort update
-        if 'order' in request.GET:
-            if request.GET['order'].find('asc') != -1:
-                order = "-" + request.GET['order'].split('.')[0]
-            else:
-                order = request.GET['order'].split('.')[0]
-        else:
-            # if not order data will order by ID DESC
-            order = '-id'
-
-        # multi search for the data
-        if 'search' in request.GET and len(request.GET['search'].split(',')) >= 1:
-            # Turn list of values into list of Q objects
-            # return Response(request.GET['search'].split(','))
-            queries = [Q(radius__contains=value)
-                       for value in request.GET['search'].split(',')]
-            # Take one Q object from the list
-            initQuery = queries.pop()
-            # Or the Q object with the ones remaining in the list
-            for query in queries:
-                initQuery |= query
-            items = items.filter(initQuery)
-
-        # GET all records from the table with order and pegnation
-        items = items.order_by(order)[start:end]
-
-        serializer = AreaSerializer(items, many=True)
-        # return the data
-        return Response(prepareResponse({"total": total, "count": settings.PER_PAGE, "page":   1 if ('page' not in request.GET) else request.GET['page']}, serializer.data))
-        
-
-    @ swagger_auto_schema(
-        tags=(['areas']),
-        responses=recordResponseSchema(AreaSerializer)
-    )
-    @ action(detail=True, methods=['GET'])
-    def record(self, request, id=None):
-        """
-        GET area by id .
-        """
-        # GET records from table
-        item = Area.objects.filter(id=id).first()
-
-        if item:
-            serializer = AreaSerializer(item, many=False)
-            return Response(prepareResponse({"total": 1}, serializer.data))
-        # if record not found
-        else:
-            return Response(prepareResponse({"status": 404, "instance": request.get_full_path()}, {}, False), 404)
-
-    @ swagger_auto_schema(
-        tags=(['areas']),
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'longitude': openapi.Schema(type=openapi.FORMAT_DOUBLE),
-                'latitude': openapi.Schema(type=openapi.FORMAT_DOUBLE),
-                'radius': openapi.Schema(type=openapi.FORMAT_DOUBLE),
-            }, required=["longitude", "latitude", "radius"],
-        ),
-        responses=createResponseSchema(AreaSerializer)
-    )
-    @ action(detail=True, methods=['POST'])
-    @ transaction.atomic
-    def create(self, request):
-        """
-        create new areas.
-        """
-        item = Area()
-        # create all from post
-        for attr, value in request.data.items():
-            # if field is allowed
-            if attr not in Area.protected():
-                setattr(item, attr, value)
-        try:
-            with transaction.atomic():
-
-                # save data
-                item.save()
-                # GET new data
-                serializer = AreaSerializer(item, many=False)
-                # retuen new data
-                return Response(prepareResponse({"total": 1}, serializer.data), 201)
-
-        except Exception as error:
-            print(error)
-            # return valiation error
-            return Response(prepareResponse({"status": 422, "instance": request.get_full_path()}, error, False), 422)
-
-    @ swagger_auto_schema(
-        tags=(['areas']),
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'longitude': openapi.Schema(type=openapi.FORMAT_DOUBLE),
-                'latitude': openapi.Schema(type=openapi.FORMAT_DOUBLE),
-                'radius': openapi.Schema(type=openapi.FORMAT_DOUBLE),
-            },
-            required=["longitude", "latitude", "radius"],
-        ),
-        responses=createResponseSchema(AreaSerializer)
-    )
-    @ action(detail=True, methods=['PUT'])
-    @ transaction.atomic
-    def update(self, request, id=None):
-        """
-        update area by id .
-        """
-        # GET records from table
-        item = Area.objects.get(id=id)
-        if item:
-            # update all from post
-            for attr, value in request.data.items():
-                # if field is allowed
-                if attr not in Area.protected():
-                    setattr(item, attr, value)
-            try:
-                with transaction.atomic():
-                    # save data
-                    item.save()
-                    # GET new data
-                    serializer = AreaSerializer(item, many=False)
-                    # retuen new data
-                    return Response(prepareResponse({"total": 1}, serializer.data), 201)
-            except Exception as error:
-                # return valiation error
-                return Response(prepareResponse({"status": 422, "instance": request.get_full_path()}, error, False), 422)
-        # if record not found
-        else:
-            return Response(prepareResponse({"status": 404, "instance": request.get_full_path()}, {}, False), 404)
-
-    @ swagger_auto_schema(
-        tags=(['areas']),
-        responses=deleteResponseSchema()
-    )
-    @ action(detail=True, methods=['DELETE'])
-    @ transaction.atomic
-    def delete(self, request, id=None):
-        """
-        delete area by id .
-        """
-        # GET records from table
-        item = Area.objects.filter(id=id).first()
-        if item:
-            with transaction.atomic():
-                # delete record
-                Area.objects.filter(id=id).update(
-                    status=StatusChoices.DELETED)
-
-                return Response(prepareResponse({"total": 0}, {}), 201)
-        # if record not found
-        else:
-            return Response(prepareResponse({"status": 404, "instance": request.get_full_path()}, {}, False), 404)
-
-
-""""""""""""""""""""""""""""""
 # devices  .
 """"""""""""""""""""""""""""""
 
@@ -871,7 +494,7 @@ class devices(viewsets.ModelViewSet):
                 'date': openapi.Schema(type=openapi.FORMAT_DATETIME)
             }, required=["device_id", "start_date", "end_date"],
         ),
-        responses=recordResponseSchema(LocationSerializer)
+        responses=recordResponseSchema(MinipillarSerializer)
     )
     @ action(detail=True, methods=['POST'])
     def history(self, request):
@@ -885,8 +508,8 @@ class devices(viewsets.ModelViewSet):
         #     request.data['end_date'], "%Y-%m-%d %H:%M:%S")
         start_date = float(request.data['start_date'])
         end_date = float(request.data['end_date'])
-        item = Location.objects.filter(device_id=request.data['device_id'],time__range=(start_date, end_date)).all()
-        serializer = LocationSerializer(item, many=True)
+        item = MiniPillar.objects.filter(device_id=request.data['device_id'],time__range=(start_date, end_date)).all()
+        serializer = MinipillarSerializer(item, many=True)
 
         ##--> read text files
 
@@ -1097,90 +720,13 @@ class devices(viewsets.ModelViewSet):
             return Response(prepareResponse({"status": 404, "instance": request.get_full_path()}, {}, False), 404)
 
 
-    # @ swagger_auto_schema(
-    #     tags=(['devices']),
-    #     request_body=openapi.Schema(
-    #         type=openapi.TYPE_OBJECT,
-    #         properties={
-    #             'device_id': openapi.Schema(type=openapi.TYPE_INTEGER),
-    #             'date': openapi.Schema(type=openapi.FORMAT_DATETIME),
-    #         }, required=["device_id", "date"],
-    #     ),
-    #     responses=recordResponseSchema(LocationSerializer)
-    # )
-    # @ action(detail=True, methods=['POST'])
-    # def readFile(self, request):
-    #     """
-    #     GET history by device id .
-    #     """
-    #     # GET records from table
-    #     # start_date = datetime.datetime.strptime(
-    #     #     request.data['start_date'], "%Y-%m-%d %H:%M:%S")
-    #     # end_date = datetime.datetime.strptime(
-    #     #     request.data['end_date'], "%Y-%m-%d %H:%M:%S")
-    #     device_id = request.data['device_id']
-    #     date = request.data['date']
-        
-    #     text_file = open('logs/{}/{}.text'. format(device_id, date), 'r')
-    #     print(text_file.readline(0))
-
-
-""""""""""""""""""""""""""""""
-# features .
-""""""""""""""""""""""""""""""
-
-
-class features(viewsets.ModelViewSet):
-    permission_classes = [administrator]
-    parser_classes = [JSONParser]
-
-    @ swagger_auto_schema(
-        tags=(['feature']),
-
-    )
-    @ action(detail=True, methods=['GET'])
-    @ transaction.atomic
-    def locations(self, request):
-        """
-        request GEOjson data 
-        """
-        devices = Device.objects.filter(status=StatusChoices.ACTIVE).all()
-
-        features = []
-        for device in devices:
-            location = Location.objects.filter(device=device).last()
-            if location is not None:
-                last_update = location.created_at
-                longitude = location.longitude
-                latitude = location.latitude
-                elevation_m = location.elevation_m
-
-
-            features.append({
-                "type": "Feature",
-                "properties": {
-                    "device": DeviceSerializer(device, many=False).data,
-                    "last_update": last_update,
-                },
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [
-                        longitude, latitude, elevation_m
-                    ]
-                }
-            })
-        featureCollection = {
-            "type": "FeatureCollection",
-            "features": features
-        }
-        return Response(featureCollection, 200)
-
 """"""""""""""""""""""""""""""
 # Mini Pillar
 """"""""""""""""""""""""""""""
 class UpdateMiniPillar(views.APIView):
     permission_classes = []
     parser_classes = [JSONParser ,MultiPartParser, FormParser]
+    # parser_classes = [MultiPartParser, JSONParser]
 
     @ swagger_auto_schema(
         tags=(['minipillars']),
@@ -1239,6 +785,7 @@ class UpdateMiniPillar(views.APIView):
         """
         # GET records from table
         item = MiniPillar.objects.get(id=id)
+
         if item:
             # update all from post
                      
@@ -1252,6 +799,7 @@ class UpdateMiniPillar(views.APIView):
                     item.device = request.user.device
                     item.checked = True
                     item.checked_by = request.user.device.username
+                    item.image = request.data["file"]
                     # item.created_by = request.user
                     # save data
                     item.save()
@@ -1312,9 +860,7 @@ class MiniPillarList(views.APIView):
         
         # create featureCollection
         geoClass = Geography()
-        # # get minipillars from db
-        # minipillars_object = MiniPillar.objects.all()
-        # minipillars_object = MinipillarSerializer(items, many=True)
+        
         # get data
         data_object = serializer.data
         # data object to features
@@ -1452,151 +998,7 @@ class Operations(viewsets.ModelViewSet):
             print(error)
             # return valiation error
             return Response(prepareResponse({"status": 422, "instance": request.get_full_path()}, error, False), 422)
-
-    @ swagger_auto_schema(
-        tags=(['Operations']),
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'longitude': openapi.Schema(type=openapi.FORMAT_DOUBLE),
-                'latitude': openapi.Schema(type=openapi.FORMAT_DOUBLE),
-                'elevation_m': openapi.Schema(type=openapi.FORMAT_DOUBLE),
-                'time': openapi.Schema(type=openapi.TYPE_STRING),
-            }, required=["longitude", "latitude", "elevation_m"],
-        ),
-        responses=createResponseSchema(LocationSerializer)
-    )
-    @ action(detail=True, methods=['POST'])
-    @ transaction.atomic
-    def locationCreate(self, request):
-        """
-        create new location "point".
-        """
-        # print("###########")
-        # print(request.user)
-        # print("###########")
-        if str(request.user) == "AnonymousUser":
-            return Response({"status": 401, "message": "you don't have permessions"}, 401)
-            
-
-        else:
-            item = Location()
-            # create all from post
-            for attr, value in request.data.items():
-                # if field is allowed
-                # if attr == "time":
-                #     value = datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
-                #     value = time.mktime(value.timetuple())
-                #     setattr(item, attr, value)
-                #     # print(value)
-
-                if attr not in Area.protected():
-                    setattr(item, attr, value)
-                    # print(value)
-                
-
-
-            # Export data to log file
-            items = list(request.data.items())
-            dirName = str(request.user.device_id)
-            today = datetime.datetime.today().strftime('%Y-%m-%d')
-            # today_unix = time.mktime(datetime.today().timetuple())
-            
-            fileName = today + ".txt"
-
-            # check if the directory is exist
-            if os.path.exists("logs/{}".format(dirName)):
-                # check if the file is exist
-                if os.path.exists("logs/{}/{}".format(dirName, fileName)):
-                    f = open("logs/{}/{}".format(dirName, fileName), "a")
-
-                    if items[2][0] == "locationId":
-                        # time_gps = datetime.datetime.strptime(items[4][1], '%Y-%m-%d %H:%M:%S')
-                        # time_unix = time.mktime(time_gps.timetuple())
-                        f.write("speed:{},{}:{},{}:{},{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
-                            items[3][0], items[3][1], items[4][0], items[4][1]))
-                    else:
-                        # time_gps = datetime.datetime.strptime(items[3][1], '%Y-%m-%d %H:%M:%S')
-                        # time_unix = time.mktime(time_gps.timetuple())
-                        f.write("speed:{},{}:{},{}:{},{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
-                            items[2][0], items[2][1], items[3][0], items[3][1]))
-
-                    f.close()
-
-                else:
-                    f = open("logs/{}/{}".format(dirName, fileName), "a")
-
-                    if items[2][0] == "locationId":
-                        # time_gps = datetime.datetime.strptime(items[4][1], '%Y-%m-%d %H:%M:%S')
-                        # time_unix = time.mktime(time_gps.timetuple())
-                        f.write("speed:{},{}:{},{}:{},{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
-                            items[3][0], items[3][1], items[4][0], items[4][1]))
-                    else:
-                        # time_gps = datetime.datetime.strptime(items[3][1], '%Y-%m-%d %H:%M:%S')
-                        # time_unix = time.mktime(time_gps.timetuple())
-                        f.write("speed:{},{}:{},{}:{},{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
-                            items[2][0], items[2][1], items[3][0], items[3][1]))
-
-                        f.close()
-
-            else:
-                # Directory
-                directory = dirName 
-                # Parent Directory path
-                parent_dir = "logs"
-                # Path
-                path = os.path.join(parent_dir, directory)
-                # Create the directory
-                os.mkdir(path)
-
-                if True:
-                    f = open("logs/{}/{}".format(dirName, fileName), "a")
-
-                    if items[2][0] == "locationId":
-                        # time_gps = datetime.datetime.strptime(items[4][1], '%Y-%m-%d %H:%M:%S')
-                        # time_unix = time.mktime(time_gps.timetuple())
-                        f.write("speed:{};{}:{};{}:{};{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
-                            items[3][0], items[3][1], items[4][0], items[4][1]))
-                    else:
-                        # time_gps = datetime.datetime.strptime(items[3][1], '%Y-%m-%d %H:%M:%S')
-                        # time_unix = time.mktime(time_gps.timetuple())
-                        f.write("speed:{};{}:{};{}:{};{}:{}\n".format(items[0][1], items[1][0], items[1][1], 
-                            items[2][0], items[2][1], items[3][0], items[3][1]))
-
-                        f.close()       
-            
-                    
-            try:
-                with transaction.atomic():
-                    areas = Area.objects.filter(status=StatusChoices.ACTIVE).all()
-                    for area in areas:
-                        circle = geodesic_point_buffer(
-                            float(area.latitude), float(area.longitude), float(area.radius))
-                        point = Point(float(request.data['latitude']), float(
-                            request.data['longitude']))
-                        polygon = Polygon(circle)
-                        
-                    
-                        if polygon.contains(point):
-                            setattr(item, 'area_id', area.id)
-                            break
-                            
-                    
-                    # set device id
-                    setattr(item, 'device_id', request.user.device_id)
-                    # save data
-                    item.save()
-                    # retuen new data
-                    return Response(prepareResponse({"total": 1}, []), 201)
-
-            except Exception as error:
-                print(error)
-                # return valiation error
-                return Response(prepareResponse({"status": 422, "instance": request.get_full_path()}, error, False), 422)
-          
-          
-          
-            
+      
 
     @ swagger_auto_schema(
         tags=(['Operations']),

@@ -28,72 +28,6 @@ class UserTypeChoices(models.TextChoices):
 # -----------------(models)------------------
 
 """"""""""""""""""""""""""""""
-# groups  .
-""""""""""""""""""""""""""""""
-
-class Group(models.Model):
-    id = models.AutoField(primary_key=True, serialize=False)
-    name = models.CharField(max_length=256, blank=False, null=False)
-    description = models.CharField(max_length=1024, blank=True, null=True)
-
-    # General
-    status = models.CharField(
-        max_length=16, choices=StatusChoices.choices,  default=StatusChoices.ACTIVE)
-    created_at = models.DateTimeField(auto_now_add=True, null=False)
-    updated_at = models.DateTimeField(auto_now=True, null=False)
-    objects = SoftDeleteManager()
-
-    class Meta:
-        db_table = "groups"
-
-    def save(self, **kwargs):
-        self.full_clean()
-        super().save(**kwargs)
-
-    def clean(self):
-        super().clean()
-
-    def str(self):
-        return str(self.id)
-
-    @staticmethod
-    def protected():
-        return ['updated_at', 'created_at', 'status']
-
-""""""""""""""""""""""""""""""
-# areas  .
-""""""""""""""""""""""""""""""
-class Area(models.Model):
-    id = models.AutoField(primary_key=True, serialize=False)
-    latitude = models.FloatField(blank=False, null=False)
-    longitude = models.FloatField(blank=False, null=False)
-    radius = models.FloatField(blank=False, null=False)
-
-    # General
-    status = models.CharField(
-        max_length=16, choices=StatusChoices.choices,  default=StatusChoices.ACTIVE)
-    created_at = models.DateTimeField(auto_now_add=True, null=False)
-    updated_at = models.DateTimeField(auto_now=True, null=False)
-    objects = SoftDeleteManager()
-
-    class Meta:
-        db_table = "areas"
-
-    def save(self, **kwargs):
-        self.full_clean()
-        super().save(**kwargs)
-
-    def clean(self):
-        super().clean()
-
-    def str(self):
-        return str(self.id)
-
-    @staticmethod
-    def protected():
-        return ['updated_at', 'created_at', 'status']
-
-""""""""""""""""""""""""""""""
 # devices  .
 """"""""""""""""""""""""""""""
 class Device(models.Model):
@@ -104,7 +38,6 @@ class Device(models.Model):
     email = models.EmailField(blank=True, null=True)
     password = models.CharField(max_length=255, blank=False, null=False)
     dateOfBirth = models.CharField(max_length=255)
-    group = models.ForeignKey(Group, on_delete=models.SET_NULL,  null=True, blank=True)
     description = models.CharField(max_length=1024, blank=True, null=True)
     code = models.CharField(max_length=4, blank=True, null=True)
     hardware = models.CharField(max_length=256, blank=True, null=True)
@@ -118,44 +51,6 @@ class Device(models.Model):
 
     class Meta:
         db_table = "devices"
-
-    def save(self, **kwargs):
-        self.full_clean()
-        super().save(**kwargs)
-
-    def clean(self):
-        super().clean()
-
-    def str(self):
-        return str(self.id)
-
-    @staticmethod
-    def protected():
-        return ['updated_at', 'created_at', 'status','group']
-
-""""""""""""""""""""""""""""""
-# locations  .
-""""""""""""""""""""""""""""""
-class Location(models.Model):
-    id = models.AutoField(primary_key=True, serialize=False)
-    latitude = models.FloatField(blank=False, null=False)
-    longitude = models.FloatField(blank=False, null=False)
-
-    elevation_m = models.FloatField(blank=False, null=False)
-    device = models.ForeignKey(Device, on_delete=models.SET_NULL,  null=True, blank=True)
-    area = models.ForeignKey(Area, on_delete=models.SET_NULL,  null=True, blank=True)
-    time = models.CharField(max_length=255)
-    # time_unix = models.CharField(max_length=255)
-    
-    # General
-    status = models.CharField(
-        max_length=16, choices=StatusChoices.choices,  default=StatusChoices.ACTIVE)
-    created_at = models.DateTimeField(auto_now_add=True, null=False)
-    updated_at = models.DateTimeField(auto_now=True, null=False)
-    objects = SoftDeleteManager()
-
-    class Meta:
-        db_table = "locations"
 
     def save(self, **kwargs):
         self.full_clean()
