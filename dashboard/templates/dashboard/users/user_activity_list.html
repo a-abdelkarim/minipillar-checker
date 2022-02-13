@@ -3,6 +3,8 @@
   Users Activity
 {% endblock title %}
 {% block content %}
+<div class="header bg-primary pb-6">
+</div>
   <div class="container-fluid mt--6">
       <div class="row">
         <div class="col-xl-12">
@@ -21,7 +23,7 @@
                   <tr>
                     <th scope="col">Username</th>
                     <th scope="col">Total Checked</th>
-                    <th scope="col">Checked at</th>
+                    <th scope="col"></th>
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
@@ -35,7 +37,20 @@
                       {{ user.checked_mp }}
                     </td>
                     <td>
-                      
+                      <div class="d-flex align-items-center">
+                        <span class="mr-2">{{user.checked_percent}}%</span>
+                        <div>
+                          <div class="progress">
+                            {% if user.checked_percent <= 20 %}
+                            <div class="progress-bar bg-gradient-danger" role="progressbar" aria-valuenow="{{user.checked_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{user.checked_percent}}%;"></div>
+                            {% elif user.checked_percent > 20 and user.checked_percent <= 70 %}
+                            <div class="progress-bar bg-gradient-warning" role="progressbar" aria-valuenow="{{user.checked_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{user.checked_percent}}%;"></div>
+                            {% elif user.checked_percent > 70 and user.checked_percent <= 100 %}
+                            <div class="progress-bar bg-gradient-success" role="progressbar" aria-valuenow="{{user.checked_percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{user.checked_percent}}%;"></div>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </div>
                     </td>
                     <td>
                       
@@ -58,7 +73,7 @@
 {% if user_activity_list.has_other_pages %}
   <ul class="pagination">
     {% if user_activity_list.has_previous %}
-      <li class="btn btn-sm btn-primary"><a href="?page={{ users.previous_page_number }}">&laquo;</a></li>
+      <li ><a class="btn btn-sm btn-primary" href="?page={{ users.previous_page_number }}">&laquo;</a></li>
     {% else %}
       <li class="disabled btn btn-sm btn-secondary"><span>&laquo;</span></li>
     {% endif %}
@@ -66,7 +81,7 @@
       {% if user_activity_list.number == i %}
         <li class="active btn btn-sm btn-primary"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
       {% else %}
-        <li class="btn btn-sm btn-primary"><a href="?page={{ i }}">{{ i }}</a></li>
+        <li ><a class="btn btn-sm btn-primary" href="?page={{ i }}">{{ i }}</a></li>
       {% endif %}
     {% endfor %}
     {% if user_activity_list.has_next %}

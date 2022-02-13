@@ -785,11 +785,11 @@ class UpdateMiniPillar(views.APIView):
         """
         # GET records from table
         item = MiniPillar.objects.get(id=id)
-
+        
         if item:
             # update all from post
                      
-            for attr, value in request.data.items():
+            for attr, value in json.loads(request.data["body"]).items():
                 # if field is allowed
                 setattr(item, attr, value)
             
@@ -1027,7 +1027,7 @@ class Operations(viewsets.ModelViewSet):
                 json_object = request.data["json_object"]
                 
                 if json_object["features"]:
-                    for feature in json_object["features"]:
+                    for feature in json_object["features"][:11]:
                         json_data, created = MiniPillar.objects.get_or_create(
                             latitude=feature["geometry"]["coordinates"][1],
                             longitude=feature["geometry"]["coordinates"][0],

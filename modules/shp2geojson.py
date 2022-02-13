@@ -1,4 +1,5 @@
 import os
+import requests
 import geopandas
 import json
 import psycopg2
@@ -33,39 +34,51 @@ class ShpToPG:
     def json_to_pg(self, json_object):
         """export json object to pg table
         """
+        auth_token='23fe479b3bb49c5a1cc8bb409330b06060430af9'
+        hed = {'Authorization': 'Token ' + auth_token}
+        url = 'http://localhost:8000/api/minipillar/import'
+        data = {
+            "name":"sss",
+            "json_object": json.dumps(json_object) 
+        }
         
-        for feature in json_object["features"]:
-            try:
-                connection = psycopg2.connect(user="postgres",
-                                            password="postgres",
-                                            host="127.0.0.1",
-                                            port="5432",
-                                            database="test")
-                cursor = connection.cursor()
+        response = requests.post(url, headers=hed, data=data)
+        print(response)
+        # data = {'json_object' : json_object, "name": name}
 
-                postgres_insert_query = """ INSERT INTO locations (longitude, latitude) VALUES (%s,%s)"""
-                record_to_insert = (feature["geometry"]["coordinates"][0], feature["geometry"]["coordinates"][1])
-                cursor.execute(postgres_insert_query, record_to_insert)
+        
+        # for feature in json_object["features"][:11]:
+        #     try:
+        #         connection = psycopg2.connect(user="postgres",
+        #                                     password="postgres",
+        #                                     host="127.0.0.1",
+        #                                     port="5432",
+        #                                     database="mini-pillar")
+        #         cursor = connection.cursor()
 
-                connection.commit()
-                count = cursor.rowcount
-                print(count, "Record inserted successfully into mobile table")
+        #         postgres_insert_query = """ INSERT INTO minipillars (longitude, latitude) VALUES (%s,%s)"""
+        #         record_to_insert = (feature["geometry"]["coordinates"][0], feature["geometry"]["coordinates"][1])
+        #         cursor.execute(postgres_insert_query, record_to_insert)
 
-            except (Exception, psycopg2.Error) as error:
-                print("Failed to insert record into mobile table", error)
+        #         connection.commit()
+        #         count = cursor.rowcount
+        #         print(count, "Record inserted successfully into mobile table")
 
-            finally:
-                # closing database connection.
-                if connection:
-                    cursor.close()
-                    connection.close()
-                    print("PostgreSQL connection is closed")
+        #     except (Exception, psycopg2.Error) as error:
+        #         print("Failed to insert record into mobile table", error)
+
+        #     finally:
+        #         # closing database connection.
+        #         if connection:
+        #             cursor.close()
+        #             connection.close()
+        #             print("PostgreSQL connection is closed")
 
     
 if __name__ == "__main__":
     shpClass = ShpToPG("E:\Projects\mini-pillar\modules\data\minipillar_wgs.shp")
     json_object = shpClass.shp_to_geojson()
-    # shpClass.shp_to_geojson(json_object)
+    # shpClass.json_to_pg(json_object)
     
 
 
