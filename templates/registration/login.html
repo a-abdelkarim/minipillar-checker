@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{% static 'vendor/nucleo/css/nucleo.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'vendor/@fortawesome/fontawesome-free/css/all.min.css' %}" type="text/css">
     <!-- Page plugins -->
-    <!-- Argon CSS -->
+    <!-- CSS -->
     <link rel="stylesheet" href="{% static 'css/argon.css' %}" type="text/css">
   </head>
 
@@ -24,29 +24,11 @@
   <!-- Navbar -->
   <nav id="navbar-main" class="navbar navbar-horizontal navbar-transparent navbar-main navbar-expand-lg navbar-light">
     <div class="container">
-      <a class="navbar-brand" href="dashboard.html">
-        <!-- <img src="{% static 'img/brand/white.png' %}"> -->
-        MiniPillar Dashboard
-      </a>
+     
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="navbar-collapse navbar-custom-collapse collapse" id="navbar-collapse">
-        <div class="navbar-collapse-header">
-          <div class="row">
-            <div class="col-6 collapse-brand">
-              <a href="dashboard.html">
-                <img src="{% static 'img/brand/blue.png' %}">
-              </a>
-            </div>
-            <div class="col-6 collapse-close">
-              <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
-                <span></span>
-                <span></span>
-              </button>
-            </div>
-          </div>
-        </div>
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
             <a href="{% url 'dashboard' %}" class="nav-link">
@@ -164,7 +146,7 @@
       </div>
     </div>
   </footer>
-  <!-- Argon Scripts -->
+  <!-- Scripts -->
   <!-- Core -->
   <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
   <script src="{% static 'vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
@@ -174,7 +156,7 @@
   <!-- Optional JS -->
   <script src="{% static 'vendor/chart.js/dist/Chart.min.js' %}"></script>
   <script src="{% static 'vendor/chart.js/dist/Chart.extension.js' %}"></script>
-  <!-- Argon JS -->
+  <!-- JS -->
   <script src="{% static 'js/argon.js' %}"></script>
 </body>
 

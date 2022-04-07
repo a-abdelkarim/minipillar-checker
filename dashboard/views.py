@@ -1,12 +1,13 @@
 import logging
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from api.models import Device, MiniPillar
 from api.serializers import DeviceSerializer, MinipillarSerializer
 from modules.geography import Geography
 from modules.PDFReport import PDFReport
+from modules.GIS import GIS
 import json
 
 
@@ -257,6 +258,35 @@ def minipillar_report(request, mp_id):
     report = open(report_path, 'rb')
 
     response = FileResponse(report)
+
+    return response
+
+
+def minipillar_export(request):
+    # GET total records
+    items = MiniPillar.objects.all()
+    # GET all records from the table with order and pegnation
+    serializer = MinipillarSerializer(items, many=True)
+    # return the data
+    
+    # create featureCollection
+    geoClass = Geography()
+    
+    # get data
+    data_object = serializer.data
+    # data object to features
+    data_features = geoClass.data_to_features(data_object)
+    # features to featureCollection
+    json_object = geoClass.features_to_featureCollection(data_features)
+    # report instance
+    gis = GIS()
+    file_path = gis.json_to_file(json_object)
+
+    
+    file = open(file_path, 'rb')
+    response = HttpResponse(file)
+    response['Content-Disposition'] = 'attachment; filename="minipillar_data.json"'
+    return(response)
 
     return response
     

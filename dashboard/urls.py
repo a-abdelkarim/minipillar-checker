@@ -13,7 +13,9 @@ urlpatterns = [
     # minipillars
     path('minipillar/list/', views.minipillar_checked_list, name='minipillar_checked_list'),
     path('minipillar/<id>/', views.minipillar_details, name='minipillar_details'),
-    # report
-    path('minipillar/<mp_id>/report', views.minipillar_report, name='minipillar_report')
+    # minipillar report
+    path('minipillar/<mp_id>/report', views.minipillar_report, name='minipillar_report'),
+    # minipillars export
+    path('minipillar/export', views.minipillar_export, name='minipillar_export'),
 ]
 

@@ -35,7 +35,7 @@ SECRET_KEY = 'rxle7_(ah&k-o+3lj=jlw1y-kr9%*$o&pfkuo(93n-at$v9pg9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'mytestapp.io' , '192.168.128.106', '2438-45-242-197-82.ngrok.io', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'mytestapp.io' , '192.168.1.10', '29f4-156-205-40-78.ngrok.io', 'localhost']
 
 
 # Application definition
@@ -161,7 +161,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mini-pillar',
+        'NAME': 'minipillar',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': 'localhost',
@@ -176,7 +176,15 @@ DATABASES = {
 #     }
 # }
 
-
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'wmspublisher$default',
+#         'USER': 'wmspublisher',
+#         'PASSWORD': 'Ahm@2011',
+#         'HOST': 'wmspublisher.mysql.pythonanywhere-services.com',
+#     }
+# }
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 

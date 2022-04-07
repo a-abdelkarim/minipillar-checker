@@ -15,8 +15,8 @@ django-leaflet==0.28.2
 django-rest-swagger==2.2.0
 djangorestframework==3.10.0
 drf-yasg==1.17.1
-Fiona @ file:///E:/Projects/mini-pillar/Fiona-1.8.18-cp36-cp36m-win_amd64.whl
-GDAL @ file:///E:/Projects/mini-pillar/GDAL-3.1.4-cp36-cp36m-win_amd64.whl
+Fiona @ file:///E:/projects/python/minipillar/Fiona-1.8.18-cp36-cp36m-win_amd64.whl
+GDAL @ file:///E:/projects/python/minipillar/GDAL-3.1.4-cp36-cp36m-win_amd64.whl
 geojson==2.5.0
 geopandas==0.9.0
 idna==3.3
