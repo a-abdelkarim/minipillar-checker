@@ -112,15 +112,15 @@ Home
             <div class="col">
               <ul class="nav nav-pills justify-content-end">
                 <li class="nav-item mr-2 mr-md-0" data-toggle="chart" data-target="#chart-sales-dark" data-update='{"data":{"datasets":[{"data":[0, 20, 10, 30, 15, 40, 20, 60, 60]}]}}' data-prefix="$" data-suffix="k">
-                  <a href="#" class="nav-link py-2 px-3 active" data-toggle="tab">
-                    <span class="d-none d-md-block">Month</span>
-                    <span class="d-md-none">M</span>
+                  <a href="{% url 'minipillar_upload' %}" class="nav-link py-2 px-3 active" data-toggle="tab">
+                    <span class="d-none d-md-block">Import</span>
+                    <span class="d-md-none">I</span>
                   </a>
                 </li>
                 <li class="nav-item" data-toggle="chart" data-target="#chart-sales-dark" >
                   <a href="{% url 'minipillar_export' %}" class="nav-link py-2 px-3" >
                     <span class="d-none d-md-block" >Export</span>
-                    <span class="d-md-none">W</span>
+                    <span class="d-md-none">E</span>
                   </a>
                 </li>
               </ul>

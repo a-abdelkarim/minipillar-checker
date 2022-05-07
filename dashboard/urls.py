@@ -17,5 +17,8 @@ urlpatterns = [
     path('minipillar/<mp_id>/report', views.minipillar_report, name='minipillar_report'),
     # minipillars export
     path('minipillar/export', views.minipillar_export, name='minipillar_export'),
+    # minipillars file upload
+    path('minipillar/upload', views.minipillar_upload, name='minipillar_upload'),
+    path('minipillar/import', views.minipillar_import, name='minipillar_import'),
 ]
 

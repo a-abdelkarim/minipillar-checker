@@ -1,0 +1,29 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}
+  Upload Minipillar File
+{% endblock title %}
+{% block content%}
+<div class="header bg-primary pb-6">
+</div>
+<div class="container-fluid mt--6">
+  <div class="row">4
+    <div class="col-xl-12">
+      <div class="card">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Import Minipillar data</h3>
+              <form method="post" enctype="multipart/form-data" action="{% url 'minipillar_import' %}">
+                {% csrf_token %}
+                <input type="file" name="mp_file">
+                <button type="submit">Upload</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}

@@ -81,9 +81,9 @@ class UserSerializer(serializers.ModelSerializer):
 """"""""""""""""""""""""""""""
 # MiniPillar .
 """"""""""""""""""""""""""""""
-class MiniPillarJsonFileSerializer(serializers.ModelSerializer):
+class MiniPillarFileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = MiniPillarJsonFile
+        model = MiniPillarFile
         fields = ('name', 'json_object', 'uploaded_at')
 
 class MinipillarSerializer(serializers.ModelSerializer):

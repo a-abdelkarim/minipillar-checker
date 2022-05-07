@@ -205,14 +205,14 @@ class MiniPillar(models.Model):
         return ['updated_at', 'created_at', 'status', 'created_by']
 
 
-class MiniPillarJsonFile(models.Model):
+class MiniPillarFile(models.Model):
     id = models.AutoField(primary_key=True, serialize=False)
     name = models.CharField(max_length=255, blank=True)
-    json_object = models.TextField(max_length=4000)
+    # file = models.FileField(upload_to="temp/file/", default="temp/file/nofile.zip")
+    json_object = models.TextField(max_length=20000)
     user = models.ForeignKey(User, on_delete=models.SET_NULL,  null=True, blank=True)
     username = models.CharField(max_length=50)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        db_table = 'minipillar_jsonfile'
-
+        db_table = 'minipillar_file'

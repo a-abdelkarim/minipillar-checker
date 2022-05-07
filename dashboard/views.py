@@ -1,13 +1,19 @@
+from ast import Pass
+from cgitb import html
 import logging
 from django.shortcuts import redirect, render
+from .handle_uploaded_file import FileHandler
 from django.contrib.auth.decorators import login_required
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from api.models import Device, MiniPillar
 from api.serializers import DeviceSerializer, MinipillarSerializer
 from modules.geography import Geography
 from modules.PDFReport import PDFReport
 from modules.GIS import GIS
+from modules.shp2geojson import ShpToPG
+from .forms import *
+from .models import *
 import json
 
 
@@ -207,6 +213,7 @@ def user_deactivate(request, pk):
     
 
 # MiniPillars
+@login_required
 def minipillar_checked_list(request):
     # get latest checked minipillars
     latest_minipillars = MiniPillar.objects.filter(checked=True).all().order_by('-last_check_at')
@@ -226,10 +233,10 @@ def minipillar_checked_list(request):
     context = {
         "latest_minipillars": latest_minipillars,
     }
-        
+ 
     return render(request, template, context)
 
-
+@login_required
 def minipillar_details(request, id):
     minipillar = MiniPillar.objects.get(id=id)
     minipillar_serializer = MinipillarSerializer(minipillar, many=False)
@@ -262,6 +269,7 @@ def minipillar_report(request, mp_id):
     return response
 
 
+@login_required
 def minipillar_export(request):
     # GET total records
     items = MiniPillar.objects.all()
@@ -288,5 +296,49 @@ def minipillar_export(request):
     response['Content-Disposition'] = 'attachment; filename="minipillar_data.json"'
     return(response)
 
+
+@login_required
+def minipillar_upload(request):
+    context = {}
+    template = "dashboard/file/upload.html"
+    response = render(request, template, context)
     return response
+
+@login_required
+def minipillar_import(request):
+    if request.method == 'POST':
+        form = MinipillarFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_file = MinipillarFile(file = request.FILES['mp_file'])
+            new_file.save()
+            file_path = "media/" + str(new_file.file)
+            fileClass = FileHandler(file_path)
+            fileClass.extract()
+            point_list = fileClass.convert_shp()
+            # remove temp files
+            fileClass.clean()
+            total_created = 0
+            total_exist = 0
+            for point in point_list:
+                json_data, created = MiniPillar.objects.get_or_create(
+                                latitude=point[1],
+                                longitude=point[0],
+                                created_by = request.user,
+                                user = request.user.email
+                            )
+                if created:
+                    total_created+=1
+                else:
+                    total_exist+=1
+            print(f"total points: {len(point_list)},\ntotal created: {total_created},\ntotal exist: {total_exist}")
+
+            # Redirect to the document list after POST
+            return HttpResponseRedirect('/dashboard')
+        else:
+            form = MinipillarFileForm()
+    else:
+        form = MinipillarFileForm() # A empty, unbound form
+    
+    return render(request, 'dashboard/file/upload.html', {'form': form})
+    
     

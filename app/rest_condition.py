@@ -128,6 +128,8 @@ class Condition(object):
 
     def __call__(self):
         return self
+    
+
 
 
 # Define some shortcuts

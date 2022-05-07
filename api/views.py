@@ -1010,14 +1010,14 @@ class Operations(viewsets.ModelViewSet):
                 
             }, required=["json_object"],
         ),
-        responses=createResponseSchema(MiniPillarJsonFileSerializer)
+        responses=createResponseSchema(MiniPillarFileSerializer)
     )
     @ action(detail=True, methods=['POST'])
     @ transaction.atomic
     def minipilar_import(self, request):
         try:
             with transaction.atomic():
-                json_file, created = MiniPillarJsonFile.objects.get_or_create(
+                json_file, created = MiniPillarFile.objects.get_or_create(
                     name=request.data['name'],
                     json_object=request.data['json_object'],
                     user = request.user,
@@ -1037,7 +1037,7 @@ class Operations(viewsets.ModelViewSet):
 
                           
 
-                serializer = MiniPillarJsonFileSerializer(json_file, many=False).data
+                serializer = MiniPillarFileSerializer(json_file, many=False).data
 
                 
                 print("json_object imported successfully")
