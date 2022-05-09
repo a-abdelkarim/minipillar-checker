@@ -20,5 +20,7 @@ urlpatterns = [
     # minipillars file upload
     path('minipillar/upload', views.minipillar_upload, name='minipillar_upload'),
     path('minipillar/import', views.minipillar_import, name='minipillar_import'),
+    # unauthorized user
+    path('unauthorized', views.unauthorized_user, name='unauthorized_user'),
 ]
 
