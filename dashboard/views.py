@@ -1,6 +1,3 @@
-from ast import Pass
-from cgitb import html
-import logging
 from django.shortcuts import redirect, render
 from .handle_uploaded_file import FileHandler
 from django.contrib.auth.decorators import login_required
@@ -11,7 +8,6 @@ from api.serializers import DeviceSerializer, MinipillarSerializer
 from modules.geography import Geography
 from modules.PDFReport import PDFReport
 from modules.GIS import GIS
-from modules.shp2geojson import ShpToPG
 from .forms import *
 from .models import *
 import json

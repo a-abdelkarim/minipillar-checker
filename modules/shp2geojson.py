@@ -1,11 +1,5 @@
-import functools
-import fiona
-import pyproj
-import requests
 import geopandas
-import json
-import geojson
-import shapely
+
 
 
 class ShpToPG:
@@ -45,7 +39,6 @@ class ShpToPG:
 if __name__ == "__main__":
     shpClass = ShpToPG("modules\data\minipillar_wgs.shp")
     json_object = shpClass.shp_to_geojson()
-    # shpClass.json_to_pg(json_object)
     
 
 

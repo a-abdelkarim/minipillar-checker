@@ -447,7 +447,6 @@ class devices(viewsets.ModelViewSet):
         # multi search for the data
         if 'search' in request.GET and len(request.GET['search'].split(',')) >= 1:
             # Turn list of values into list of Q objects
-            # return Response(request.GET['search'].split(','))
             queries = [Q(name__contains=value)
                        for value in request.GET['search'].split(',')]
             # Take one Q object from the list
@@ -970,13 +969,11 @@ class Operations(viewsets.ModelViewSet):
                     user.set_password(request.data['password'])
                     user.save()
 
-                    # return Response(serializer, status=status.HTTP_401_UNAUTHORIZED)
                     return Response(prepareResponse({"total": 1, "status": 200}, serializer), 200)
                 else:
 
                     if device.status == StatusChoices.INACTIVE:
                         serializer = DeviceSerializer(device, many=False).data
-                        # return Response(serializer, status=status.HTTP_401_UNAUTHORIZED)
                         return Response(prepareResponse({"total": 1, "status":401}, serializer), 401)
                     user = User.objects.filter(
                         email=request.data['username']).first()
@@ -985,13 +982,10 @@ class Operations(viewsets.ModelViewSet):
                         if check_password(request.data['password'], user.password):
                             token, created = Token.objects.get_or_create(
                                 user=user)
-                            # return Response({"total": 1, 'token': token.key}, serializer, status=status.HTTP_201_CREATED)
                             return Response(prepareResponse({"total": 1, 'token': token.key, 'status': 201}, serializer), 201)
                         else:
-                            # return Response({"total": 1}, serializer, status=status.HTTP_401_UNAUTHORIZED)
                             return Response(prepareResponse({"total": 1, 'status': 401}, serializer), 401)
                     else:
-                        # Response({"total": 1}, serializer, status=status.HTTP_401_UNAUTHORIZED)
                         return Response(prepareResponse({"total": 1, 'status': 401}, serializer), 401)
 
         except Exception as error:

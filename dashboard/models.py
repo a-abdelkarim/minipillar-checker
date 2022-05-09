@@ -1,5 +1,4 @@
 from django.db import models
-from api.models import MiniPillar, User
 
 
 class MinipillarFile(models.Model):
