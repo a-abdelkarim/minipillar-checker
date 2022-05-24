@@ -33,7 +33,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'rxle7_(ah&k-o+3lj=jlw1y-kr9%*$o&pfkuo(93n-at$v9pg9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = 1
 
 ALLOWED_HOSTS = ['127.0.0.1', 'mytestapp.io' , '192.168.128.106', '29f4-156-205-40-78.ngrok.io', 'localhost']
 
